@@ -22,7 +22,8 @@ void AAuraEffectActor::BeginPlay()
 	// Sphere->OnComponentEndOverlap.AddDynamic(this, &AAuraEffectActor::EndOverlap);
 }
 
-void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass)
+void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass,
+                                           EEffectRemovePolicy EffectRemovePolicy = EEffectRemovePolicy::DoNotRemove)
 {
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 
@@ -43,7 +44,7 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	const bool bIsInfinite = EffectSpecHandle.Data.Get()->Def.Get()->DurationPolicy ==
 		EGameplayEffectDurationType::Infinite;
 
-	if (bIsInfinite)
+	if (bIsInfinite && EffectRemovePolicy == EEffectRemovePolicy::RemoveOnEndOverlap)
 	{
 		ActiveEffectHandles.Add(ActiveEffectHandle, TargetASC);
 	}
@@ -63,14 +64,14 @@ void AAuraEffectActor::OnOverlap(AActor* TargetActor)
 
 	if (InfiniteEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
 	{
-		ApplyEffectToTarget(TargetActor, InfiniteGameplayEffectClass);
+		ApplyEffectToTarget(TargetActor, InfiniteGameplayEffectClass, InfiniteEffectRemovePolicy);
 	}
 
 	for (const FGameEffectAndPolicy& GameEffectAndPolicy : GameEffectAndPolicyArray)
 	{
 		if (GameEffectAndPolicy.ApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
 		{
-			ApplyEffectToTarget(TargetActor, GameEffectAndPolicy.GameEffectClass);
+			ApplyEffectToTarget(TargetActor, GameEffectAndPolicy.GameEffectClass, GameEffectAndPolicy.RemovePolicy);
 		}
 	}
 }
@@ -89,7 +90,7 @@ void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
 
 	if (InfiniteEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
 	{
-		ApplyEffectToTarget(TargetActor, InfiniteGameplayEffectClass);
+		ApplyEffectToTarget(TargetActor, InfiniteGameplayEffectClass, InfiniteEffectRemovePolicy);
 	}
 
 	if (InfiniteEffectRemovePolicy == EEffectRemovePolicy::RemoveOnEndOverlap)
@@ -101,10 +102,11 @@ void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
 	{
 		if (GameEffectAndPolicy.ApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
 		{
-			ApplyEffectToTarget(TargetActor, GameEffectAndPolicy.GameEffectClass);
+			ApplyEffectToTarget(TargetActor, GameEffectAndPolicy.GameEffectClass, GameEffectAndPolicy.RemovePolicy);
 		}
 		else if (GameEffectAndPolicy.RemovePolicy == EEffectRemovePolicy::RemoveOnEndOverlap)
 		{
+			RemoveGameEffect(TargetActor);
 		}
 	}
 }

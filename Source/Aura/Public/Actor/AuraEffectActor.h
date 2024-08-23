@@ -42,6 +42,8 @@ struct FGameEffectAndPolicy
 };
 
 
+
+
 UCLASS()
 class AURA_API AAuraEffectActor : public AActor
 {
@@ -54,7 +56,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
-	void ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass);
+	void ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass,
+	                         EEffectRemovePolicy EffectRemovePolicy);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Effects")
 	bool bDestroyOnEffectRemoval = false;
