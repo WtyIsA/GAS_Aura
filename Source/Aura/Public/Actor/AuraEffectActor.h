@@ -42,8 +42,6 @@ struct FGameEffectAndPolicy
 };
 
 
-
-
 UCLASS()
 class AURA_API AAuraEffectActor : public AActor
 {
@@ -93,6 +91,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Effects")
 	TArray<FGameEffectAndPolicy> GameEffectAndPolicyArray;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Effects")
+	float ActorLevel = 1.f;
 
 	void RemoveGameEffect(AActor* TargetActor);
 };
