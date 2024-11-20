@@ -32,6 +32,11 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	}
 }
 
+void UAttributeMenuWidgetController::UpgradeAttribute(const FGameplayTag& GameplayTag)
+{
+	
+}
+
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& GameplayTag,
                                                             const FGameplayAttribute& Attribute) const
 {
