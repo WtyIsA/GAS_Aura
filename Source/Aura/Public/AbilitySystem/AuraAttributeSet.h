@@ -14,6 +14,7 @@ GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+
 USTRUCT()
 struct FEffectProperties
 {
@@ -50,11 +51,16 @@ struct FEffectProperties
 	ACharacter* TargetCharacter = nullptr;
 };
 
+//typedef TBaseStaticDelegateInstance<FGameplayAttribute(), FDefaultDelegateUserPolicy>::FFuncPtr FAttributeFuncPtr;
 
+template <class T>
+using TStaticFunPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateUserPolicy>::FFuncPtr;
 /**
  * 
  */
-UCLASS()
+UCLASS
+
+()
 class AURA_API UAuraAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
@@ -67,6 +73,10 @@ public:
 
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
+
+	//TMap<FGameplayTag, TBaseStaticDelegateInstance<FGameplayAttribute(), FDefaultDelegateUserPolicy>::FFuncPtr> TagsToAttributes;
+	//TMap<FGameplayTag, FGameplayAttribute(*)()> TagsToAttributes;
+	TMap<FGameplayTag, TStaticFunPtr<FGameplayAttribute()>> TagsToAttributes;
 
 	/*
 	 * Primary Attribute
@@ -150,7 +160,6 @@ public:
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Mana);
 
 
-
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 
@@ -165,7 +174,7 @@ public:
 
 	UFUNCTION()
 	void OnRep_Strength(const FGameplayAttributeData& OldStrength) const;
-	
+
 	UFUNCTION()
 	void OnRep_Intelligence(const FGameplayAttributeData& OldIntelligence) const;
 

@@ -10,6 +10,8 @@ class UAttributeInfo;
 struct FAuraAttributeInfo;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttributeInfoSignature, const FAuraAttributeInfo&, Info);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttributePointsChangedSignature, int32, AttributePoints);
+
 /**
  * 
  */
@@ -25,7 +27,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attribute")
 	FAttributeInfoSignature AttributeInfoDelegate;
 
-
+	UPROPERTY(BlueprintAssignable, Category="GAS|Attribute")
+	FAttributePointsChangedSignature AttributePointsChangedDelegate;
+	
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UAttributeInfo> AttributeInfo;
+
+private:
+	void BroadcastAttributeInfo(const FGameplayTag& GameplayTag, const FGameplayAttribute& Attribute) const;
 };
