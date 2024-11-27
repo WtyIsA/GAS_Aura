@@ -98,6 +98,7 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
+	bAutoRunning = false;
 }
 
 void AAuraPlayerController::CursorTrace()
