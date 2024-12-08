@@ -7,6 +7,7 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Aura/Aura.h"
 #include "Components/CapsuleComponent.h"
+#include "Player/AuraPlayerState.h"
 
 AAuraCharacterBase::AAuraCharacterBase()
 {
@@ -110,9 +111,10 @@ void AAuraCharacterBase::Dissolve()
 		StartDissolveTimeline(DynamicMatInst);
 	}
 
-	if(IsValid(WeaponDissolveMaterialInstance))
+	if (IsValid(WeaponDissolveMaterialInstance))
 	{
-		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
+		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(
+			WeaponDissolveMaterialInstance, this);
 		Weapon->SetMaterial(0, DynamicMatInst);
 		StartWeaponDissolveTimeline(DynamicMatInst);
 	}
