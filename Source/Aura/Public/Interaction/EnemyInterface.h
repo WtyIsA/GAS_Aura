@@ -25,4 +25,10 @@ public:
 	// = 0 纯虚函数 当有了纯虚函数 这个类会变成抽象类：无法实例化对象，子类必须重写纯虚函数,如果子类没重写，子类也会变成抽象类
 	virtual void HighlightActor() = 0;
 	virtual void UnHighlightActor() = 0;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetCombatTarget(AActor* InCombatTarget);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	AActor* GetCombatTarget() const;
 };
