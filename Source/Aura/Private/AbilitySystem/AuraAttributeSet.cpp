@@ -9,6 +9,7 @@
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "Character/AuraCharacter.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -35,7 +36,7 @@ UAuraAttributeSet::UAuraAttributeSet()
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_ManaRegeneration, GetManaRegenerationAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MaxHealth, GetMaxHealthAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MaxMana, GetMaxManaAttribute);
-	
+
 	//抗性
 	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Fire, GetFireResistanceAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Lightning, GetLightningResistanceAttribute);
@@ -147,12 +148,20 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit,
                                          bool bCriticalHit) const
 {
-	if (Props.SourceCharacter != Props.TargetCharacter)
+	if (Props.SourceAvatarActor != Props.TargetAvatarActor)
 	{
-		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(
-			Props.SourceCharacter->GetController()))
+		if (const AAuraCharacter* AuraCharacter = Cast<AAuraCharacter>(
+			Props.SourceAvatarActor))
 		{
-			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
+			Cast<AAuraPlayerController>(AuraCharacter->GetController())->ShowDamageNumber(
+				Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
+		}
+
+		if (AAuraCharacter* AuraCharacter = Cast<AAuraCharacter>(
+			Props.TargetAvatarActor))
+		{
+			Cast<AAuraPlayerController>(AuraCharacter->GetController())->ShowDamageNumber(
+				Damage, AuraCharacter, bBlockedHit, bCriticalHit);
 		}
 	}
 }
