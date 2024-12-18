@@ -9,8 +9,3 @@ int32 ICombatInterface::GetSelfLevel()
 	return 0;
 }
 
-FVector ICombatInterface::GetCombatSocketLocation()
-{
-	return FVector();
-}
-
