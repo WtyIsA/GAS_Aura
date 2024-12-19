@@ -167,10 +167,19 @@ void UAuraAbilitySystemLibrary::GetLivePlayersWithRadius(const UObject* WorldCon
 
 		for (FOverlapResult& Overlap : Overlaps)
 		{
-			if (Overlap.GetActor()->Implements<UCombatInterface>() && !ICombatInterface::Execute_IsDead(Overlap.GetActor()))
+			if (Overlap.GetActor()->Implements<UCombatInterface>() && !ICombatInterface::Execute_IsDead(
+				Overlap.GetActor()))
 			{
 				OutOverlappingActors.AddUnique(ICombatInterface::Execute_GetAvatar(Overlap.GetActor()));
 			}
 		}
 	}
+}
+
+bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondActor)
+{
+	const bool bBothArePlayer = FirstActor->ActorHasTag(FName("Player")) && SecondActor->ActorHasTag(FName("Player"));
+	const bool bBothAreEnemy = FirstActor->ActorHasTag(FName("Enemy")) && SecondActor->ActorHasTag(FName("Enemy"));
+
+	return !(bBothAreEnemy || bBothArePlayer);
 }
