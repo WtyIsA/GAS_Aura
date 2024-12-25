@@ -17,7 +17,8 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation,const FGameplayTag& SocketTag)
+void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag,
+                                           bool bOverridePitch, float PitchOverride)
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 
@@ -32,6 +33,10 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 	//Rotation.Pitch = 0;
+	if (bOverridePitch)
+	{
+		Rotation.Pitch = PitchOverride;
+	}
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(SocketLocation);
 	SpawnTransform.SetRotation(Rotation.Quaternion());
@@ -57,8 +62,10 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	HitResult.Location = ProjectileTargetLocation;
 	EffectContextHandle.AddHitResult(HitResult);
 
+	int32 Level = GetAbilityLevel();
+	Level = 20;
 	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(
-		DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
+		DamageEffectClass, Level, EffectContextHandle);
 
 	// set by caller 伤害值
 	// const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
@@ -67,7 +74,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 
 	for (auto& Pair : DamageTypes)
 	{
-		const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
+		const float ScaledDamage = Pair.Value.GetValueAtLevel(Level);
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamage);
 	}
 
