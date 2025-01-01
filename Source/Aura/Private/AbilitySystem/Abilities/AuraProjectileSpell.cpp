@@ -63,7 +63,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	EffectContextHandle.AddHitResult(HitResult);
 
 	int32 Level = GetAbilityLevel();
-	Level = 20;
+	//Level = 20;
 	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(
 		DamageEffectClass, Level, EffectContextHandle);
 
