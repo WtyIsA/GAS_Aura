@@ -32,7 +32,7 @@ public:
 
 	/** Combat interface **/
 
-	virtual int32 GetSelfLevel() override;
+	virtual int32 GetSelfLevel_Implementation() override;
 	virtual void Die() override;
 	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
 	virtual AActor* GetCombatTarget_Implementation() const override;

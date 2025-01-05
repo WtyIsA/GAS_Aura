@@ -148,9 +148,39 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
 	{
-		//const float LocalIncomingXP = GetIncomingXP();
+		const float LocalIncomingXP = GetIncomingXP();
 		SetIncomingXP(0.f);
 		//UE_LOG(LogAura, Log, TEXT("Incoming XP: %f"), LocalIncomingXP);
+
+		if (Props.SourceAvatarActor->Implements<UPlayerInterface>())
+		{
+			const int32 CurrentLevel = ICombatInterface::Execute_GetSelfLevel(Props.SourceAvatarActor);
+			const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceAvatarActor);
+
+			const int32 NewLevel = IPlayerInterface::Execute_FindLevelForXP(
+				Props.SourceAvatarActor, CurrentXP + LocalIncomingXP);
+			const int32 NumLevelUps = NewLevel - CurrentLevel;
+
+			for (int32 i = 0; i < NumLevelUps; i++)
+			{
+				const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointsReward(
+					Props.SourceAvatarActor, CurrentLevel);
+
+				const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(
+					Props.SourceAvatarActor, CurrentLevel);
+
+				IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceAvatarActor, NumLevelUps);
+				IPlayerInterface::Execute_AddToAttributePoints(Props.SourceAvatarActor, AttributePointsReward);
+				IPlayerInterface::Execute_AddToSpellPoints(Props.SourceAvatarActor, SpellPointsReward);
+
+				SetHealth(GetMaxHealth());
+				SetMana(GetMaxMana());
+
+				IPlayerInterface::Execute_LevelUp(Props.SourceAvatarActor);
+			}
+
+			IPlayerInterface::Execute_AddToXP(Props.SourceAvatarActor, LocalIncomingXP);
+		}
 	}
 }
 
@@ -177,9 +207,9 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 
 void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
 {
-	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor))
+	if (Props.TargetAvatarActor->Implements<UCombatInterface>())
 	{
-		int32 TargetLevel = CombatInterface->GetSelfLevel();
+		int32 TargetLevel = ICombatInterface::Execute_GetSelfLevel(Props.TargetAvatarActor);
 		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetAvatarActor);
 		const int32 XPReward = UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(
 			Props.TargetAvatarActor, TargetClass, TargetLevel);

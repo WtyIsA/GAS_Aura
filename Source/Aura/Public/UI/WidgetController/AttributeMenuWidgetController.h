@@ -28,13 +28,17 @@ public:
 	FAttributeInfoSignature AttributeInfoDelegate;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attribute")
-	FAttributePointsChangedSignature AttributePointsChangedDelegate;
+	FOnPlayerStatChangedSignature AttributePointsChangedDelegate;
 
+	UPROPERTY(BlueprintAssignable, Category="GAS|Attribute")
+	FOnPlayerStatChangedSignature SpellPointsChangedDelegate;
+	
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UAttributeInfo> AttributeInfo;
 
 	UFUNCTION(BlueprintCallable)
 	void UpgradeAttribute(const FGameplayTag& AttributeTag);
+
 
 private:
 	void BroadcastAttributeInfo(const FGameplayTag& GameplayTag, const FGameplayAttribute& Attribute) const;
