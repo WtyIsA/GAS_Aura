@@ -73,6 +73,7 @@ public:
 
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
+	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue);
 
 	//TMap<FGameplayTag, TBaseStaticDelegateInstance<FGameplayAttribute(), FDefaultDelegateUserPolicy>::FFuncPtr> TagsToAttributes;
 	//TMap<FGameplayTag, FGameplayAttribute(*)()> TagsToAttributes;
@@ -167,7 +168,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_PhysicalResistance, Category="Resistance Attributes")
 	FGameplayAttributeData PhysicalResistance;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, PhysicalResistance);
-	
+
 	/*
 	 * Vital Attribute
 	 */
@@ -240,7 +241,7 @@ public:
 
 	UFUNCTION()
 	void OnRep_FireResistance(const FGameplayAttributeData& OldFireResistance) const;
-	
+
 	UFUNCTION()
 	void OnRep_LightningResistance(const FGameplayAttributeData& OldLightningResistance) const;
 
@@ -253,7 +254,10 @@ public:
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 
-	void ShowFloatingText(const FEffectProperties& Props, float Damage,bool bBlockedHit,bool bCriticalHit) const;
+	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const;
 
 	void SendXPEvent(const FEffectProperties& Props);
+
+	bool bTopOffHealth = false;
+	bool bTopOffMana = false;
 };
