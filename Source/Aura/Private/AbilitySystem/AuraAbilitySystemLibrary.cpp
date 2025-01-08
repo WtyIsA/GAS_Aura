@@ -11,19 +11,35 @@
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
 
-UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
+bool UAuraAbilitySystemLibrary::MakeWidgetControllerParams(const UObject* WorldContextObject, FWidgetControllerParams& OutWCParams, AAuraHUD*& OutAuraHUD)
 {
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
 	{
-		if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(PC->GetHUD()))
+		OutAuraHUD = Cast<AAuraHUD>(PC->GetHUD());
+		if (OutAuraHUD)
 		{
 			AAuraPlayerState* PS = PC->GetPlayerState<AAuraPlayerState>();
 			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
 			UAttributeSet* AS = PS->GetAttributeSet();
-			const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
-
-			return AuraHUD->GetOverlayWidgetController(WidgetControllerParams);
+			OutWCParams.AttributeSet = AS;
+			OutWCParams.PlayerController = PC;
+			OutWCParams.AbilitySystemComponent = ASC;
+			OutWCParams.PlayerState = PS;
+			return true;
 		}
+	}
+
+	return false;
+}
+
+UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
+{
+	FWidgetControllerParams WCParams;
+	AAuraHUD* AuraHUD = nullptr;
+
+	if (MakeWidgetControllerParams(WorldContextObject, WCParams, AuraHUD))
+	{
+		return AuraHUD->GetOverlayWidgetController(WCParams);
 	}
 
 	return nullptr;
@@ -32,25 +48,31 @@ UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(
 UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidgetController(
 	const UObject* WorldContextObject)
 {
-	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
-	{
-		if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(PC->GetHUD()))
-		{
-			AAuraPlayerState* PS = PC->GetPlayerState<AAuraPlayerState>();
-			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
-			UAttributeSet* AS = PS->GetAttributeSet();
-			const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
+	FWidgetControllerParams WCParams;
+	AAuraHUD* AuraHUD = nullptr;
 
-			return AuraHUD->GetAttributeMenuWidgetController(WidgetControllerParams);
-		}
+	if (MakeWidgetControllerParams(WorldContextObject, WCParams, AuraHUD))
+	{
+		return AuraHUD->GetAttributeMenuWidgetController(WCParams);
 	}
 
 	return nullptr;
 }
 
-void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject,
-                                                            ECharacterClass CharacterClass, float Level,
-                                                            UAbilitySystemComponent* ASC)
+USpellMenuWidgetController* UAuraAbilitySystemLibrary::GetSpellMenuWidgetController(const UObject* WorldContextObject)
+{
+	FWidgetControllerParams WCParams;
+	AAuraHUD* AuraHUD = nullptr;
+
+	if (MakeWidgetControllerParams(WorldContextObject, WCParams, AuraHUD))
+	{
+		return AuraHUD->GetSpellMenuWidgetController(WCParams);
+	}
+
+	return nullptr;
+}
+
+void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC)
 {
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
 	FCharacterClassDefaultInfo ClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
@@ -77,8 +99,7 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 	ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributeSpecHandle.Data.Get());
 }
 
-void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC,
-                                                     ECharacterClass CharacterClass)
+void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass)
 {
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
 	for (TSubclassOf<UGameplayAbility> AbilityClass : CharacterClassInfo->CommonAbilities)
@@ -100,8 +121,7 @@ void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 	}
 }
 
-int32 UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* WorldContextObject,
-                                                             ECharacterClass CharacterClass, int32 CharacterLevel)
+int32 UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel)
 {
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
 	if (CharacterClassInfo == nullptr)
@@ -166,10 +186,7 @@ void UAuraAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& E
 	}
 }
 
-void UAuraAbilitySystemLibrary::GetLivePlayersWithRadius(const UObject* WorldContextObject,
-                                                         TArray<AActor*>& OutOverlappingActors,
-                                                         const TArray<AActor*>& ActorsToIgnore, float Radius,
-                                                         const FVector& SphereOrigin)
+void UAuraAbilitySystemLibrary::GetLivePlayersWithRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin)
 {
 	FCollisionQueryParams SphereParams;
 	SphereParams.AddIgnoredActors(ActorsToIgnore);

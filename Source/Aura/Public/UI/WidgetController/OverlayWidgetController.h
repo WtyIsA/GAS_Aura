@@ -36,7 +36,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float,
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FAuraAbilityInfo&, Info);
 
 /**
  * 
@@ -65,10 +64,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Message")
 	FMessageWidgetRowSignature MessageWidgetRowDelegate;
-
-	UPROPERTY(BlueprintAssignable, Category="GAS|Message")
-	FAbilityInfoSignature AbilityInfoDelegate;
-
+	
 	UPROPERTY(BlueprintAssignable, Category="GAS|XP")
 	FOnAttributeChangedSignature OnXPPercentChangedDelegate;
 
@@ -79,8 +75,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widget Data")
-	TObjectPtr<UAbilityInfo> AbilityInfo;
+
 	//回调函数，现用lambda代替
 	void HealthChanged(const FOnAttributeChangeData& Data) const;
 	void MaxHealthChanged(const FOnAttributeChangeData& Data) const;
@@ -90,8 +85,6 @@ protected:
 
 	template <typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
-
-	void OnInitializeStartupAbility(UAuraAbilitySystemComponent* AuraAbilitySystemComponent);
 
 	void OnXPChanged(int32 NewXP);
 };
