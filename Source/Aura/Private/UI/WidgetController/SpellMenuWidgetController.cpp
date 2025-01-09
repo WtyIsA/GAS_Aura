@@ -42,7 +42,7 @@ void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityT
 	const bool bTagNone = AbilityTag.MatchesTag(GameplayTags.Abilities_None);
 	const FGameplayAbilitySpec* AbilitySpec = GetAuraASC()->GetSpecFromAbilityTag(AbilityTag);
 	const bool bSpecValid = AbilitySpec != nullptr;
-	if (!bTagValid || !bTagNone || !bSpecValid)
+	if (!bTagValid || bTagNone || !bSpecValid)
 	{
 		AbilityStatus = GameplayTags.Abilities_Status_Locked;
 	}
@@ -54,7 +54,7 @@ void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityT
 	bool bEnableSpellPointsButton = false;
 	bool bEnableEquipButton = false;
 	ShouldEnableButtons(AbilityStatus, SpellPoints, bEnableSpellPointsButton, bEnableEquipButton);
-	SpellGlobeSelectedDelegate.Broadcast(bEnableSpellPointsButton, bEnableEquipButton);
+	SpellGlobeSelectedDelegate.Broadcast(bEnableSpellPointsButton, bEnableEquipButton, "", "");
 }
 
 void USpellMenuWidgetController::ShouldEnableButtons(const FGameplayTag& AbilityStatus, int32 SpellPoints, bool& bShouldEnableSpellPointsButton, bool& bShouldEnableEquipButton)
