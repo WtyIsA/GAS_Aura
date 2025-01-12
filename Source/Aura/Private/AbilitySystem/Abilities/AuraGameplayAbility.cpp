@@ -20,7 +20,7 @@ FString UAuraGameplayAbility::GetLockedDescription(int32 Level)
 	return FString::Printf(TEXT("<Default>Spell Locked Until Level %d</>"), Level);
 }
 
-float UAuraGameplayAbility::GetManaCost(float InLevel)
+float UAuraGameplayAbility::GetManaCost(float InLevel) const
 {
 	float ManaCost = 0.f;
 	if (const UGameplayEffect* CostEffect = GetCostGameplayEffect())
@@ -37,6 +37,12 @@ float UAuraGameplayAbility::GetManaCost(float InLevel)
 	return ManaCost;
 }
 
-float UAuraGameplayAbility::GetCooldown(float InLevel)
+float UAuraGameplayAbility::GetCooldown(float InLevel) const
 {
+	float Cooldown = 0.f;
+	if (const UGameplayEffect* CooldownEffect = GetCooldownGameplayEffect())
+	{
+		CooldownEffect->DurationMagnitude.GetStaticMagnitudeIfPossible(InLevel, Cooldown);
+	}
+	return Cooldown;
 }

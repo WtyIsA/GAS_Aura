@@ -3,28 +3,52 @@
 
 #include "AbilitySystem/Abilities/AuraFireBolt.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
 
 FString UAuraFireBolt::GetDescription(int32 Level)
 {
-	const int32 Damage = DamageTypes[FAuraGameplayTags::Get().Damage_Fire].GetValueAtLevel(Level);
-	const float ManaCost = GetManaCost(Level);
-
+	const int32 ScaledDamage = Damage.GetValueAtLevel(Level);
+	const float ManaCost = FMath::Abs(GetManaCost(Level));
+	const float Cooldown = GetCooldown(Level);
 	if (Level == 1)
 	{
 		return FString::Printf(TEXT(
-			"<Title>Fire Bolt</>\n\n<Default>Launches a bolt of fire,exploding on impact and dealing:</><Damage>%d</><Default>"
-			"fire damage with a chance to burn</>\n\n<Small>Level%d</>"), Damage, Level);
+			"<Title>Fire Bolt</>\n"
+			"<Small>Level:</><Level>%d</>\n"
+			"<Small>ManaCost:</><ManaCost>%.1f</>\n"
+			"<Small>Cooldown:</><Cooldown>%.1f</>\n"
+			"<Default>Launches a bolt of fire,exploding on impact and dealing:</>"
+			"<Damage>%d</><Default>"
+			"fire damage with a chance to burn</>\n\n"
+		), Level, ManaCost, Cooldown, ScaledDamage);
 	}
 	else
 	{
-		return FString::Printf(TEXT("<Title>Fire Bolt</>\n\n<Default>Launches %d bolt of fire,exploding on impact and dealing:</><Damage>%d</><Default>fire damage with a chance to burn</>\n\n<Small>Level%d</>"), FMath::Min(Level, NumProjectiles), Damage, Level);
+		return FString::Printf(TEXT(
+			"<Title>Fire Bolt</>\n"
+			"<Small>Level:</><Level>%d</>\n"
+			"<Small>ManaCost:</><ManaCost>%.1f</>\n"
+			"<Small>Cooldown:</><Cooldown>%.1f</>\n"
+			"<Default>Launches %d bolts of fire,exploding on impact and dealing:</>"
+			"<Damage>%d</><Default>"
+			"fire damage with a chance to burn</>\n\n"
+		), Level, ManaCost, Cooldown, FMath::Min(Level, NumProjectiles), ScaledDamage);
 	}
 }
 
 FString UAuraFireBolt::GetNextLevelDescription(int32 Level)
 {
-	const int32 Damage = DamageTypes[FAuraGameplayTags::Get().Damage_Fire].GetValueAtLevel(Level);
-
-	return FString::Printf(TEXT("<Title>Next Level</>\n\n<Default>Launches %d bolt of fire,exploding on impact and dealing:</><Damage>%d</><Default>fire damage with a chance to burn</>\n\n<Small>Level%d</>"), FMath::Min(Level, NumProjectiles), Damage, Level);
+	const int32 ScaledDamage = Damage.GetValueAtLevel(Level);
+	const float ManaCost = FMath::Abs(GetManaCost(Level));
+	const float Cooldown = GetCooldown(Level);
+	return FString::Printf(TEXT(
+		"<Title>Next Level</>\n"
+		"<Small>Level:</><Level>%d</>\n"
+		"<Small>ManaCost:</><ManaCost>%.1f</>\n"
+		"<Small>Cooldown:</><Cooldown>%.1f</>\n"
+		"<Default>Launches %d bolts of fire,exploding on impact and dealing:</>"
+		"<Damage>%d</><Default>"
+		"fire damage with a chance to burn</>\n\n"
+	), Level, ManaCost, Cooldown, FMath::Min(Level, NumProjectiles), ScaledDamage);
 }
