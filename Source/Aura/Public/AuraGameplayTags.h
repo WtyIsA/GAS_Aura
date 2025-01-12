@@ -39,6 +39,15 @@ public:
 
 	FGameplayTag Attributes_Meta_IncomingXP;
 
+	FGameplayTag DeBuff_Burn;
+	FGameplayTag DeBuff_Stun;
+	FGameplayTag DeBuff_Arcane;
+	FGameplayTag DeBuff_Physical;
+
+	FGameplayTag DeBuff_Chance;
+	FGameplayTag DeBuff_Damage;
+	FGameplayTag DeBuff_Duration;
+	FGameplayTag DeBuff_Frequency;
 
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;
@@ -85,6 +94,7 @@ public:
 	FGameplayTag Montage_Attack_4;
 
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToDeBuffs;
 
 	FGameplayTag Effects_HitReact;
 
