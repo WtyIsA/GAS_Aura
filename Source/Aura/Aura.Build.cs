@@ -1,5 +1,5 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
-
+using System.IO;
 using UnrealBuildTool;
 
 public class Aura : ModuleRules
@@ -8,10 +8,16 @@ public class Aura : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
+		PublicIncludePaths.AddRange(
+			new string[] {
+				// ... add public include paths required here ...
+				Path.Combine(ModuleDirectory, "../ThirdParty/")  //rapidjson
+			}
+		);
+		
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
 			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayAbilities", "Lua", "UnLua",
-			"LuaRapidjson"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]

@@ -50,9 +50,11 @@ public:
 
     void Reset();
 
+    int32 GetRefCount()const {return  RefCount;}
 private:
     TWeakObjectPtr<UObject> SelfObject;
     UnLua::FDelegateRegistry* Registry;
     int32 LuaRef;
     void* Delegate;
+    int32 RefCount;
 };

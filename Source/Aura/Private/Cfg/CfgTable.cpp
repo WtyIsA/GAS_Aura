@@ -8,6 +8,8 @@
 #include "CfgManager.h"
 #include "EndianOpt.h"
 #include "lapi.h"
+#include "lstring.h"
+#include "ltable.h"
 #include "lua.hpp"
 #include "LuaManger.h"
 #include "LuaMessageTableOptInC.h"

@@ -81,6 +81,10 @@ namespace UnLua
 
         void NotifyHandlerBeginDestroy(ULuaDelegateHandler* Handler);
 
+        void ReleaseHandle(const UObject* Object);
+        void ReleaseHandle(const UObject* Object, const void* luaFun);
+        TMap<FLuaDelegatePair, TWeakObjectPtr<ULuaDelegateHandler>>& GetAllHandler(){return CachedHandlers;}
+
     private:
         void CheckSignatureCompatible(lua_State* L, ULuaDelegateHandler* Handler, void* OtherDelegate);
 

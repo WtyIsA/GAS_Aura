@@ -324,4 +324,54 @@ namespace UnLua
         Ret->SelfObject = SelfObject ? SelfObject : Owner;
         return Ret;
     }
+
+    void FDelegateRegistry::ReleaseHandle(const UObject* Object)
+    {
+        if(!Object)
+            return;
+        TWeakObjectPtr<ULuaDelegateHandler> deletgateHandel;
+        FLuaDelegatePair* key = nullptr;
+        for(auto& item:CachedHandlers)
+        {
+            if(item.Value == Object)
+            {
+                item.Value.Get()->RefCount--;
+                deletgateHandel = item.Value;
+                key = &item.Key;
+                break;
+            }
+        }/*
+        if(deletgateHandel.IsValid() && deletgateHandel->RefCount == 0)
+        {
+            for(auto& item:Delegates)
+            {
+                if(item.Value.Handlers.Contains(deletgateHandel))
+                    item.Value.Handlers.Remove(deletgateHandel);
+            }
+            Env->AutoObjectReference.Remove(deletgateHandel.Get());
+            CachedHandlers.Remove(*key);
+        }*/
+    }
+
+    void FDelegateRegistry::ReleaseHandle(const UObject* Object, const void* luaFun)
+    {
+        if(!Object || !luaFun)
+            return;
+        const auto DelegatePair = FLuaDelegatePair((UObject*)Object, luaFun);
+        const auto Cached = CachedHandlers.Find(DelegatePair);
+        if(Cached && Cached->IsValid())
+        {
+            (*Cached)->RefCount--;/*
+            if((*Cached)->RefCount == 0)
+            {
+                for(auto& item:Delegates)
+                {
+                    if(item.Value.Handlers.Contains(*Cached))
+                        item.Value.Handlers.Remove(*Cached);
+                }
+                Env->AutoObjectReference.Remove(Cached->Get());
+                CachedHandlers.Remove(DelegatePair);
+            }*/
+        }
+    }
 }

@@ -756,4 +756,9 @@ namespace UnLua
         }
         return Buffer;
     }
+
+    void FLuaEnv::SetLuaSearchPaths(const TArray<FString>& luaPaths)
+    {
+        LuaSearchPaths = luaPaths;
+    }
 }

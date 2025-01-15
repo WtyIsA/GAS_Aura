@@ -119,7 +119,9 @@ namespace UnLua
         void AddManualObjectReference(UObject* Object);
 
         void RemoveManualObjectReference(UObject* Object);
-
+        
+        FObjectReferencer& GetObjectReferencer() {return  AutoObjectReference;}
+        static void SetLuaSearchPaths(const TArray<FString>& luaPaths);
     protected:
         lua_State* L;
 
@@ -184,5 +186,6 @@ namespace UnLua
         FString Name = TEXT("Env_0");
         bool bObjectArrayListenerRegistered;
         bool bStarted;
+        static TArray<FString>  LuaSearchPaths;
     };
 }
