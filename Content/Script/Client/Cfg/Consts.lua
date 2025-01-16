@@ -1,0 +1,91 @@
+
+---@class Consts
+---@field MAX_ROLE_NAME_LENGTH number
+---@field MIN_ROLE_NAME_LENGTH number
+---@field CREATE_ROLE_NAME_SYMBOL string
+---@field TROOP_NUM_LIMIT number
+---@field TROOP_INVITE_LIMIT_TIME number
+---@field RECRUIT_CHAT_MAX number
+---@field TROOP_RECRUIT_LIMIT_TIME number
+---@field TROOP_RECOMMEND_CD number
+---@field TROOP_RECOMMEND_OPEN_CD number
+---@field PLAYED_HERO_CFG_ID number
+---@field MAIN_CROW_ANIMATION_PATH string
+---@field HERO_GRAPH_START_NUMBER number
+---@field MAX_CHAT_WORD_NUM number
+---@field MAX_CHAT_ROLE_NUM number
+---@field MAX_CHAT_ROLE_MSG_NUM number
+---@field MAX_CHAT_MSG_NUM number
+---@field MIN_CHAT_HEIGHT number
+---@field MAX_CHAT_HEIGHT number
+---@field CHAT_FONT_SIZE_PC number
+---@field CHAT_FONT_SIZE_MOBILE number
+---@field CHAT_NAME_MAX_SIZE number
+---@field CHAT_WORLD_SEND_CD number
+---@field CHAT_BATTLE_SEND_CD number
+---@field CHAT_HALL_LEVEL_LIMIT number
+---@field TRUMPET_SEND_CD number
+---@field TRUMPET_LIMIT_NUM number
+---@field TRUMPET_SHOW_TIME_MIN number
+---@field TRUMPET_SHOW_TIME_MAX number
+---@field TRUMPET_QUEUE_MAX number
+---@field TRUMPET_SCROLL_TIME_MIN number
+---@field TRUMPET_SCROLL_TIME_MAX number
+---@field TRUMPET_SCROLL_SPEED number
+---@field FRIEND_LIMIT_NUM number
+---@field FRIEND_APPLY_LIMIT_NUM number
+---@field RELEASE_LIMIT_TIME number
+---@field PAGE_SIZE number
+---@field MAIN_MODEL_ROTATE_RATE number
+---@field WAREHOUSE_ROW number
+---@field WAREHOUSE_COLUMN number
+---@field WAREHOUSE_DEFAULT_PAGES number
+---@field WAREHOUSE_PAGES_NUM number
+---@field NUMBER_OF_HISTORICAL_ACHIEVEMENTS_ROWS number
+---@field MAIL_LIMIT_NUM number
+---@field NUMBER_OF_RANK_ROWS number
+---@field HERO_APPEARANCE_CONSUME_TYPE number
+---@field TRANSACTION_BUY_PAGE_ROWS number
+---@field TRANSACTION_BUY_MAX_PAGE number
+---@field TRANSACTION_HISTORY_PAGE_ROWS number
+---@field USE_TRANSACTION_ID number
+---@field USE_TRANSACTION_MONEY_ID number
+---@field TRANSACTION_AUCTION_DEFAULT_TIME number
+---@field TRANSACTION_BUY_MAX_PRICE number
+---@field TRANSACTION_SELL_MAX_PRICE number
+---@field TRANSACTION_BUY_MIN_PRICE number
+---@field TRANSACTION_SELL_MIN_PRICE number
+---@field MERCHANT_ROW number
+---@field MERCHANT_COLUMN number
+---@field TRANSACTION__ROW number
+---@field TRANSACTION_COLUMN number
+---@field Pack_Row number
+---@field Pack_Column number
+---@field SETTLEMENT_EXP_TIME number
+---@field MAX_DAYLY_EXP number
+---@field AGREEMENT_VERSION_NUMBER string
+---@field TEANSACTION_VALUE_CALCULATE_TIME number
+---@field TEANSACTION_VALUE_REFERSH_CYCLE number
+---@field TEANSACTION_RECENT_PRICE_RECORD_TIME number
+---@field TEANSACTION_RECENT_PRICE_SHOW_NUMBER number
+---@field TEANSACTION_AVERAGE_PRICE_RECORD_TIME number
+---@field TEANSACTION_AUCTION_SHOW_NUMBER number
+---@field TEANSACTION_AUCTION_SHOW_TIME number
+---@field ALERTBOX_SHOW_LOCATION_X number
+---@field ALERTBOX_SHOW_LOCATION_Y number
+---@field SETTING_SLIDER_CHANGE_VALUE number
+---@field DEVELOPLIST_MOVE_TO_LOCATION number
+---@field DEVELOPLIST_MOVE_SPEED number
+---@field DISCORD_WIBSITE string
+---@field FEEDBACK_MAX_WORD_NUM number
+---@field TRANSACTION_ORDER_LIST_SHOW_NUMBER number
+---@field KEYBOARD_CONFLICT_DELAY_TIME number
+---@field HERO_FOG_RATE number
+---@field REPORT_REASON_NUM number
+---@field REPORT_WORD_NUM number
+
+Consts = FLuaCfgInterface.RegisConstTable([[{"name":"Consts","fields":[{"name":"MAX_ROLE_NAME_LENGTH","type":"int"}, {"name":"MIN_ROLE_NAME_LENGTH","type":"int"}, {"name":"CREATE_ROLE_NAME_SYMBOL","type":"string"}, {"name":"TROOP_NUM_LIMIT","type":"int"}, {"name":"TROOP_INVITE_LIMIT_TIME","type":"int"}, {"name":"RECRUIT_CHAT_MAX","type":"int"}, {"name":"TROOP_RECRUIT_LIMIT_TIME","type":"int"}, {"name":"TROOP_RECOMMEND_CD","type":"int"}, {"name":"TROOP_RECOMMEND_OPEN_CD","type":"int"}, {"name":"PLAYED_HERO_CFG_ID","type":"int"}, {"name":"MAIN_CROW_ANIMATION_PATH","type":"string"}, {"name":"HERO_GRAPH_START_NUMBER","type":"int"}, {"name":"MAX_CHAT_WORD_NUM","type":"int"}, {"name":"MAX_CHAT_ROLE_NUM","type":"int"}, {"name":"MAX_CHAT_ROLE_MSG_NUM","type":"int"}, {"name":"MAX_CHAT_MSG_NUM","type":"int"}, {"name":"MIN_CHAT_HEIGHT","type":"int"}, {"name":"MAX_CHAT_HEIGHT","type":"int"}, {"name":"CHAT_FONT_SIZE_PC","type":"int"}, {"name":"CHAT_FONT_SIZE_MOBILE","type":"int"}, {"name":"CHAT_NAME_MAX_SIZE","type":"int"}, {"name":"CHAT_WORLD_SEND_CD","type":"int"}, {"name":"CHAT_BATTLE_SEND_CD","type":"int"}, {"name":"CHAT_HALL_LEVEL_LIMIT","type":"int"}, {"name":"TRUMPET_SEND_CD","type":"int"}, {"name":"TRUMPET_LIMIT_NUM","type":"int"}, {"name":"TRUMPET_SHOW_TIME_MIN","type":"int"}, {"name":"TRUMPET_SHOW_TIME_MAX","type":"int"}, {"name":"TRUMPET_QUEUE_MAX","type":"int"}, {"name":"TRUMPET_SCROLL_TIME_MIN","type":"int"}, {"name":"TRUMPET_SCROLL_TIME_MAX","type":"int"}, {"name":"TRUMPET_SCROLL_SPEED","type":"int"}, {"name":"FRIEND_LIMIT_NUM","type":"int"}, {"name":"FRIEND_APPLY_LIMIT_NUM","type":"int"}, {"name":"RELEASE_LIMIT_TIME","type":"int"}, {"name":"PAGE_SIZE","type":"int"}, {"name":"MAIN_MODEL_ROTATE_RATE","type":"float"}, {"name":"WAREHOUSE_ROW","type":"int"}, {"name":"WAREHOUSE_COLUMN","type":"int"}, {"name":"WAREHOUSE_DEFAULT_PAGES","type":"int"}, {"name":"WAREHOUSE_PAGES_NUM","type":"int"}, {"name":"NUMBER_OF_HISTORICAL_ACHIEVEMENTS_ROWS","type":"int"}, {"name":"MAIL_LIMIT_NUM","type":"int"}, {"name":"NUMBER_OF_RANK_ROWS","type":"int"}, {"name":"HERO_APPEARANCE_CONSUME_TYPE","type":"int"}, {"name":"TRANSACTION_BUY_PAGE_ROWS","type":"int"}, {"name":"TRANSACTION_BUY_MAX_PAGE","type":"int"}, {"name":"TRANSACTION_HISTORY_PAGE_ROWS","type":"int"}, {"name":"USE_TRANSACTION_ID","type":"int"}, {"name":"USE_TRANSACTION_MONEY_ID","type":"int"}, {"name":"TRANSACTION_AUCTION_DEFAULT_TIME","type":"int"}, {"name":"TRANSACTION_BUY_MAX_PRICE","type":"int"}, {"name":"TRANSACTION_SELL_MAX_PRICE","type":"int"}, {"name":"TRANSACTION_BUY_MIN_PRICE","type":"int"}, {"name":"TRANSACTION_SELL_MIN_PRICE","type":"int"}, {"name":"MERCHANT_ROW","type":"int"}, {"name":"MERCHANT_COLUMN","type":"int"}, {"name":"TRANSACTION__ROW","type":"int"}, {"name":"TRANSACTION_COLUMN","type":"int"}, {"name":"Pack_Row","type":"int"}, {"name":"Pack_Column","type":"int"}, {"name":"SETTLEMENT_EXP_TIME","type":"int"}, {"name":"MAX_DAYLY_EXP","type":"int"}, {"name":"AGREEMENT_VERSION_NUMBER","type":"string"}, {"name":"TEANSACTION_VALUE_CALCULATE_TIME","type":"int"}, {"name":"TEANSACTION_VALUE_REFERSH_CYCLE","type":"int"}, {"name":"TEANSACTION_RECENT_PRICE_RECORD_TIME","type":"int"}, {"name":"TEANSACTION_RECENT_PRICE_SHOW_NUMBER","type":"int"}, {"name":"TEANSACTION_AVERAGE_PRICE_RECORD_TIME","type":"int"}, {"name":"TEANSACTION_AUCTION_SHOW_NUMBER","type":"int"}, {"name":"TEANSACTION_AUCTION_SHOW_TIME","type":"int"}, {"name":"ALERTBOX_SHOW_LOCATION_X","type":"int"}, {"name":"ALERTBOX_SHOW_LOCATION_Y","type":"int"}, {"name":"SETTING_SLIDER_CHANGE_VALUE","type":"int"}, {"name":"DEVELOPLIST_MOVE_TO_LOCATION","type":"int"}, {"name":"DEVELOPLIST_MOVE_SPEED","type":"int"}, {"name":"DISCORD_WIBSITE","type":"string"}, {"name":"FEEDBACK_MAX_WORD_NUM","type":"int"}, {"name":"TRANSACTION_ORDER_LIST_SHOW_NUMBER","type":"int"}, {"name":"KEYBOARD_CONFLICT_DELAY_TIME","type":"int"}, {"name":"HERO_FOG_RATE","type":"float"}, {"name":"REPORT_REASON_NUM","type":"int"}, {"name":"REPORT_WORD_NUM","type":"int"}]}]]);
+
+--const.xml
+--常量表.txt
+

@@ -3,6 +3,7 @@
 
 #include "LuaManger.h"
 
+#include "Cfg/CfgManager.h"
 #include "UnLua/Private/UnLuaPrivate.h"
 
 ULuaManger* ULuaManger::handle = nullptr;
@@ -20,8 +21,8 @@ ULuaManger* ULuaManger::Get(UGameInstance* pGameIns)
 
 void ULuaManger::SetLuaSearchPathAndOcPath(const TArray<FString>& luaSearchPaths, const FString& ocPath)
 {
-	// FCfgManager::Get()->SetOcPath(ocPath);
-	// UnLua::SetLuaSearchPaths(luaSearchPaths);
+	 FCfgManager::Get()->SetOcPath(ocPath);
+	 UnLua::SetLuaSearchPaths(luaSearchPaths);
 }
 
 FString ULuaManger::GetLuaSrcPath(FString& luaScriptName) const

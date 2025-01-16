@@ -5,21 +5,311 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4bd88cbd-6c57-4e31-a99c-879f3cb3b8c8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../Blueprints/AbilitySystem/GameplayAbility/BP_TestGA.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Blueprints/AbilitySystem/GameplayAbility/GA_TestGA.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Blueprints/AbilitySystem/GameplayAbility/GE_AddGA.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.Script.dir/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/GAS/GA/GA_TestGA.lua" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Player/BPAuraCharacter.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/AccountLevelCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ActionAudioCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ActivityCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ActorRandomCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/AltarBuffCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/AnimationCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/AppearanceCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ArmorCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/AttributeModificationCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/AttributeShowNameCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/AudioCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/BloodTextureCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/BodyPartBoneCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/BornHpAddAttackCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/BuffCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/BulletCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/CharacterAbilityCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ChatChannelIcon.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ColorCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/Consts.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/Consts_Bs.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/CutscenseCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/DefaultHighCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/DefaultSettingCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/DropItemCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/DropItemDetailCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/DropTypeIconCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/EffectCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ErrorCodeStringCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/GCCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/GCWeaponSubTypeCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/GECfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/GEWeaponSubTypeCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/GameplayMapCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/GmPrivilegesCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/HeroAbilityAttributeValueCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/HeroAbilityExtraAttributeValueCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/HeroAttackFactorCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/HeroAttributeInitCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/HeroCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/HeroColorCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/HeroLevelCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/HeroTypeCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/HitAudioCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/HitEffectCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ImpactForceCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/InviteFriendCeremonyCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/InviteTotalCeremonyCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ItemCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ItemExchangeCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ItemPriceCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ItemQualityCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ItemTypeCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/JarCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/JewelryCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/KeyboardCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/KillTypeCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/LevelMapCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/LoadingTextureCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/LoadingTipsCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/LocationCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/MapMarkCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/MapNameCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/MedicineCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/MenuCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/MerchantCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/MiningCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/MissileCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ModelCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/MonsterCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/MultiLanguageIndexCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/MultiTextureCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/Name1Cfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/Name2Cfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/Name3Cfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/Name4Cfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/NamePatternCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/OverseaFirstNameCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/OverseaLastNameCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/PickUpAudioCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/PickaxeCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/RankCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/RankIconCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/RecruitModeCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/RecruitNoticeCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ReportCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ReportTypeCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ShortCutKeyCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/ShowActionCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/SlotTypeCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/Strings.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/StringsAudioCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/SystemMailCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/TransactionCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/TransactionParameterCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/TreasureCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/TreasurePileCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/TroopStateTypeCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/TroopUnreadyStateTypeCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/WarehouseCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/WarehouseIconCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/WarpGateCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/WeaponAttackIconCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/WeaponAudioCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/WeaponCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Cfg/WorldLanguageCfg.oc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ALLCFGS.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AccountLevelCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AcquisitionMoneyType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ActionAudioCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ActiveSkillSlotType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ActivityCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ActivityLimitType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ActivityType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ActorRandomBean.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ActorRandomCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AltarBuffCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AnimationCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AppearanceCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ArmorCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ArmorType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AttributeGEList.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AttributeModificationCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AttributeNameEnum.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AttributeShowLocation.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AttributeShowNameCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AttributionAndValue.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AudioCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AudioCloseMaterialSwitch.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AudioHeroGenderSwitch.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AudioMaterialSwitch.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/AudioParameters.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/BelongType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/BloodTextureCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/BodyPartBoneCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/BodyPartEnum.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/BornHpAddAttackCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/BuffCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/BulletCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/CharacterAbilityCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ChatChannelIcon.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ClothType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ColorCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/Consts.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/Consts_Bs.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/CostType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/CutscenseCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/DamageAttributeType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/DamageInstigatorType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/DamageType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/DefaultHighCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/DefaultSettingCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/DropDesInfo.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/DropDetailInfo.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/DropDetailInfoSet.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/DropInfo.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/DropItem.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/DropItemCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/DropItemDetailCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/DropType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/DropTypeIconCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/EffectCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ErrorCodeStringCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ExtraArmorType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ExtraAttributionIdProbability.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ExtraAttributionNumProbability.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/FixDrop.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ForgeInfo.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/GCCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/GCWeaponSubTypeCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/GECfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/GEWeaponSubTypeCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/GainType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/GameplayMapCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/GmPrivilegesCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/HarmAttribution.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/HeroAbilityAttributeValueCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/HeroAbilityExtraAttributeValueCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/HeroAbilityType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/HeroAttackFactorCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/HeroAttributeInitCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/HeroCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/HeroColorCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/HeroLevelCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/HeroShape.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/HeroTagCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/HeroTypeCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/HitAudioCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/HitEffectCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ImpactForceCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/InviteFriendCeremonyCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/InviteTotalCeremonyCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ItemCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ItemExchangeCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ItemExchangeConsume.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ItemIdAndNumber.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ItemPriceCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ItemProgramType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ItemQualityCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ItemType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ItemTypeCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/JarCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/JewelryCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/KeyboardCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/KillType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/KillTypeCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/LevelMapCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/LoadingTextureCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/LoadingTipsCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/LocationCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MailPlatformType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MapMarkCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MapNameCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MatchType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MaterialForAudio.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MedicineCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MenuCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MerchantCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MerchantType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MiningCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MissileCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ModeType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ModelCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MoneyType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MonsterCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MonsterRankType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MonsterType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MultiLanguageIndexCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/MultiTextureCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/Name1Cfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/Name2Cfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/Name3Cfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/Name4Cfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/NamePatternCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/OverseaFirstNameCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/OverseaLastNameCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/PassiveSkillSlotType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/PhysicsType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/PickUpAudioCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/PickaxeCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/RankCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/RankIconCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/RankType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/RecruitModeCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/RecruitNoticeCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ReportCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ReportLargeType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ReportType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ReportTypeCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/SalesMoneyType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/SalesType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/SellingInfo.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/SettingType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ShortCutKeyCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ShortCutKeyType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/ShowActionCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/SkillParams.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/SlotType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/SlotTypeCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/Strings.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/StringsAudioCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/SystemMailCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/TransactionCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/TransactionParameterCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/TreasureCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/TreasurePileCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/TroopStateType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/TroopStateTypeCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/TroopUnreadyStateType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/TroopUnreadyStateTypeCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/WarehouseCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/WarehouseIconCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/WarpGateCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/WeaponActionValue.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/WeaponAttackIconCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/WeaponAudioCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/WeaponCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/WeaponCrossHairType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/WeaponDamageValue.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/WeaponSubType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/WeaponSubTypeAndGCList.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/WeaponType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/WorldLanguageCfg.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Cfg/obtainType.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Client/Global.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Share/ArrayList.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Share/HashMap.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Share/HashSet.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Share/Json/json.lua" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../.idea/.idea.Aura.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/.idea.Aura.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Blueprints/Character/Aura/BP_AuraCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/../Blueprints/Character/Aura/BP_AuraCharacter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Blueprints/Player/BP_AuraPlayerState.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/../Blueprints/Player/BP_AuraPlayerState.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Maps/StartupMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/../Maps/StartupMap.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Script.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Script.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Client/LuaMgr.lua" beforeDir="false" afterPath="$PROJECT_DIR$/Client/LuaMgr.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Source/Aura/Private/LuaManger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Source/Aura/Private/LuaManger.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="NewLua" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
@@ -33,27 +323,38 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\wty\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\DecompilerCache",
-      "C:\\Users\\wty\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\SourcesCache",
-      "C:\\Users\\wty\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\wty\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\wty\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\wty\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
+  <component name="RunManager">
+    <configuration name="Unnamed" type="lua.emmy.debugger" factoryName="Emmy Debugger(NEW)" nameIsGenerated="true">
+      <module name="rider.module" />
+      <option name="TYPE" value="0" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="9966" />
+      <option name="PIPE" value="emmy" />
+      <option name="WIN_ARCH" value="1" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -64,6 +365,7 @@
       <updated>1725975146819</updated>
       <workItem from="1725975147937" duration="35000" />
       <workItem from="1725975420234" duration="3619000" />
+      <workItem from="1737036615591" duration="3002000" />
     </task>
     <servers />
   </component>
