@@ -11,25 +11,27 @@
 // software distributed under the License is distributed on an "AS IS" BASIS, 
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 // See the License for the specific language governing permissions and limitations under the License.
-
+#include "LuaEnv.h"
 #include "Engine/World.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/PlayerController.h"
-#include "LuaEnv.h"
 #include "Binding.h"
+#include "IPlatformFilePak.h"
 #include "LowLevel.h"
 #include "Registries/ObjectRegistry.h"
 #include "Registries/ClassRegistry.h"
+#include "lstate.h"
 #include "LuaCore.h"
 #include "LuaDynamicBinding.h"
+#include "lualib.h"
 #include "UELib.h"
+#include "MemTracker.h"
 #include "ObjectReferencer.h"
 #include "UnLuaDelegates.h"
 #include "UnLuaInterface.h"
 #include "UnLuaLegacy.h"
 #include "UnLuaLib.h"
 #include "UnLuaSettings.h"
-#include "lstate.h"
 
 namespace UnLua
 {
@@ -757,8 +759,8 @@ namespace UnLua
         return Buffer;
     }
 
-    void FLuaEnv::SetLuaSearchPaths(const TArray<FString>& luaPaths)
-    {
-        LuaSearchPaths = luaPaths;
-    }
+    // void FLuaEnv::SetLuaSearchPaths(const TArray<FString>& luaPaths)
+    // {
+    //     LuaSearchPaths = luaPaths;
+    // }
 }
