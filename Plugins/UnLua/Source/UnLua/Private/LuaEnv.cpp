@@ -40,7 +40,8 @@ namespace UnLua
     TMap<lua_State*, FLuaEnv*> FLuaEnv::AllEnvs;
     FLuaEnv::FOnCreated FLuaEnv::OnCreated;
     FLuaEnv::FOnDestroyed FLuaEnv::OnDestroyed;
-
+    TArray<FString> FLuaEnv::LuaSearchPaths;
+    
 #if ENABLE_UNREAL_INSIGHTS && CPUPROFILERTRACE_ENABLED
     void Hook(lua_State* L, lua_Debug* ar)
     {
@@ -759,8 +760,8 @@ namespace UnLua
         return Buffer;
     }
 
-    // void FLuaEnv::SetLuaSearchPaths(const TArray<FString>& luaPaths)
-    // {
-    //     LuaSearchPaths = luaPaths;
-    // }
+    void FLuaEnv::SetLuaSearchPaths(const TArray<FString>& luaPaths)
+    {
+        LuaSearchPaths = luaPaths;
+    }
 }

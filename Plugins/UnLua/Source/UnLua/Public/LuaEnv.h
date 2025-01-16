@@ -121,7 +121,7 @@ namespace UnLua
         void RemoveManualObjectReference(UObject* Object);
         
         FObjectReferencer& GetObjectReferencer() {return  AutoObjectReference;}
-        //static void SetLuaSearchPaths(const TArray<FString>& luaPaths);
+        static void SetLuaSearchPaths(const TArray<FString>& luaPaths);
     protected:
         lua_State* L;
 
