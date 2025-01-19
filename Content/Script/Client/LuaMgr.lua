@@ -8,7 +8,6 @@
 
 local LuaMgr = Class()
 
-
 ---@private
 function LuaMgr:Init()
 
@@ -16,30 +15,35 @@ end
 
 ---@private
 function LuaMgr:Start()
-
     print("!!!!!!!!!!!")
     local luaPath = UE4.TArray("");
     luaPath:Add("Client/")
     luaPath:Add("Client/Cfg/")
+    luaPath:Add("Client/Msg/Gs/")
+    luaPath:Add("Client/Msg/As/")
+    luaPath:Add("Client/Msg/Gate/")
+    luaPath:Add("Share/")
     self:SetLuaSearchPathAndOcPath(luaPath, "Cfg/");
     self:InitRequirePath()
 
     require("HashSet")
     require("HashMap")
     require("ArrayList")
-    
+
     Global.g_luaMgr = self;
-    --Global.g_gameInstance = self:GetGameInstance();
-    --Global.g_resMgr = self:GetResMgr();
-    --Global._ProjectPersistentDownloadDir = self:GetPersistentDownloadDir();
+    Global.g_gameInstance = self:GetGameInstance();
+    Global.g_resMgr = self:GetResMgr();
+    Global._ProjectPersistentDownloadDir = self:GetPersistentDownloadDir();
     --Global.g_FPSMgr = Global.g_luaMgr:GetFPSManager();
+
     require("Utils")
-    self:RequireAllCfgs()
+
+    --self:RequireAllCfgs()
+
 end
 
-
 function LuaMgr:InitRequirePath()
-    local luaSrcPath , luarelativepath   = self:GetLuaSrcPath()
+    local luaSrcPath, luarelativepath = self:GetLuaSrcPath()
     print("luaSrcPath is ", luarelativepath, luaSrcPath)
     package.path = string.format("%sClient/?.lua;%sShare/?.lua;%s", luaSrcPath, luaSrcPath, package.path)
 

@@ -1,4 +1,5 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
+
 using System.IO;
 using UnrealBuildTool;
 
@@ -9,19 +10,20 @@ public class Aura : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicIncludePaths.AddRange(
-			new string[] {
+			new string[]
+			{
 				// ... add public include paths required here ...
-				Path.Combine(ModuleDirectory, "../ThirdParty/")  //rapidjson
+				Path.Combine(ModuleDirectory, "../ThirdParty/") //rapidjson
 			}
 		);
-		
+
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
-			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayAbilities", "Lua", "UnLua",
+			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayAbilities", "Lua", "UnLua", "RenderCore", "RHI",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
-			{ "GameplayTags", "GameplayTasks", "NavigationSystem", "Niagara", "AIModule" });
+			{ "GameplayTags", "GameplayTasks", "NavigationSystem", "Niagara", "AIModule", "PakFile", });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
