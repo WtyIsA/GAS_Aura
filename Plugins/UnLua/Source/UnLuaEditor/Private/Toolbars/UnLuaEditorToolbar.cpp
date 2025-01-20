@@ -1,5 +1,4 @@
-﻿#include "Misc/EngineVersionComparison.h"
-#include "UnLuaPrivate.h"
+﻿#include "UnLuaPrivate.h"
 #include "UnLuaEditorCore.h"
 #include "UnLuaEditorToolbar.h"
 #include "UnLuaEditorCommands.h"
@@ -148,11 +147,7 @@ void FUnLuaEditorToolbar::BindToLua_Executed() const
     if (TargetClass->ImplementsInterface(UUnLuaInterface::StaticClass()))
         return;
 
-#if UE_VERSION_OLDER_THAN(5, 1, 0)
     const auto Ok = FBlueprintEditorUtils::ImplementNewInterface(Blueprint, FName("UnLuaInterface"));
-#else
-    const auto Ok = FBlueprintEditorUtils::ImplementNewInterface(Blueprint, FTopLevelAssetPath(UUnLuaInterface::StaticClass()));
-#endif
     if (!Ok)
         return;
 
@@ -183,7 +178,7 @@ void FUnLuaEditorToolbar::BindToLua_Executed() const
         InterfaceDesc.Graphs[0]->Nodes[1]->Pins[1]->DefaultValue = LuaModuleName;
     }
 
-#if !UE_VERSION_OLDER_THAN(4, 26, 0)
+#if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 26)
 
     const auto BlueprintEditors = FModuleManager::LoadModuleChecked<FBlueprintEditorModule>("Kismet").GetBlueprintEditors();
     for (auto BlueprintEditor : BlueprintEditors)
@@ -214,13 +209,9 @@ void FUnLuaEditorToolbar::UnbindFromLua_Executed() const
     if (!TargetClass->ImplementsInterface(UUnLuaInterface::StaticClass()))
         return;
 
-#if UE_VERSION_OLDER_THAN(5, 1, 0)
     FBlueprintEditorUtils::RemoveInterface(Blueprint, FName("UnLuaInterface"));
-#else
-    FBlueprintEditorUtils::RemoveInterface(Blueprint, FTopLevelAssetPath(UUnLuaInterface::StaticClass()));
-#endif
 
-#if !UE_VERSION_OLDER_THAN(4, 26, 0)
+#if ENGINE_MAJOR_VERSION > 4 || (ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION >= 26)
 
     const auto BlueprintEditors = FModuleManager::LoadModuleChecked<FBlueprintEditorModule>("Kismet").GetBlueprintEditors();
     for (auto BlueprintEditor : BlueprintEditors)
@@ -282,7 +273,7 @@ void FUnLuaEditorToolbar::CreateLuaTemplate_Executed()
     const auto TemplateName = ModuleNameParts.Last();
 
     const auto RelativePath = ModuleName.Replace(TEXT("."), TEXT("/"));
-    const auto FileName = FString::Printf(TEXT("%s%s.lua"), *GLuaSrcFullPath, *RelativePath);
+    const auto FileName = FString::Printf(TEXT("%sClient/%s.lua"), *GLuaSrcFullPath, *RelativePath);
 
     if (FPaths::FileExists(FileName))
     {
@@ -294,7 +285,7 @@ void FUnLuaEditorToolbar::CreateLuaTemplate_Executed()
     for (auto TemplateClass = Class; TemplateClass; TemplateClass = TemplateClass->GetSuperClass())
     {
         auto TemplateClassName = TemplateClass->GetName().EndsWith("_C") ? TemplateClass->GetName().LeftChop(2) : TemplateClass->GetName();
-        auto RelativeFilePath = "Config/LuaTemplates" / TemplateClassName + ".lua";
+        auto RelativeFilePath = "Content/Template" / TemplateClassName + ".lua";
         auto FullFilePath = FPaths::ProjectConfigDir() / RelativeFilePath;
         if (!FPaths::FileExists(FullFilePath))
             FullFilePath = BaseDir / RelativeFilePath;
@@ -303,8 +294,11 @@ void FUnLuaEditorToolbar::CreateLuaTemplate_Executed()
             continue;
 
         FString Content;
+        FString className = Class->GetName();
+        className = className.Mid(0, className.Len()-2);
         FFileHelper::LoadFileToString(Content, *FullFilePath);
         Content = Content.Replace(TEXT("TemplateName"), *TemplateName)
+                         .Replace(TEXT("WidgetBlueprintName"),*className)   
                          .Replace(TEXT("ClassName"), *UnLua::IntelliSense::GetTypeName(Class));
 
         FFileHelper::SaveStringToFile(Content, *FileName, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);

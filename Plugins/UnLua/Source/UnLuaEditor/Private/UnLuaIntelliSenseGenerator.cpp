@@ -12,18 +12,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 // See the License for the specific language governing permissions and limitations under the License.
 
-#include "Misc/EngineVersionComparison.h"
 #include "UnLuaIntelliSenseGenerator.h"
-#if UE_VERSION_NEWER_THAN(5, 1, 0)
-#include "AssetRegistry/AssetRegistryModule.h"
-#else
-#include "AssetRegistryModule.h"
-#endif
 #include "CoreUObject.h"
 #include "UnLua.h"
 #include "UnLuaEditorSettings.h"
 #include "UnLuaIntelliSense.h"
+#include "UnLuaInterface.h"
 #include "WidgetBlueprint.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "Blueprint/WidgetTree.h"
 #include "Engine/Blueprint.h"
 #include "Interfaces/IPluginManager.h"
@@ -45,7 +41,7 @@ void FUnLuaIntelliSenseGenerator::Initialize()
         return;
 
     OutputDir = IPluginManager::Get().FindPlugin("UnLua")->GetBaseDir() + "/Intermediate/IntelliSense";
-
+    OutputDir = FPaths::Combine(FPaths::ProjectDir(),TEXT("IntelliSense"));
     FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));
     AssetRegistryModule.Get().OnAssetAdded().AddRaw(this, &FUnLuaIntelliSenseGenerator::OnAssetAdded);
     AssetRegistryModule.Get().OnAssetRemoved().AddRaw(this, &FUnLuaIntelliSenseGenerator::OnAssetRemoved);
@@ -60,13 +56,8 @@ void FUnLuaIntelliSenseGenerator::UpdateAll()
     const FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));
 
     FARFilter Filter;
-#if UE_VERSION_OLDER_THAN(5, 1, 0)
     Filter.ClassNames.Add(UBlueprint::StaticClass()->GetFName());
     Filter.ClassNames.Add(UWidgetBlueprint::StaticClass()->GetFName());
-#else
-    Filter.ClassPaths.Add(UBlueprint::StaticClass()->GetClassPathName());
-    Filter.ClassPaths.Add(UWidgetBlueprint::StaticClass()->GetClassPathName());
-#endif
 
     TArray<FAssetData> BlueprintAssets;
     TArray<const UField*> NativeTypes;
@@ -94,7 +85,6 @@ void FUnLuaIntelliSenseGenerator::UpdateAll()
     {
         if (SlowTask.ShouldCancel())
             break;
-
         Export(Type);
         SlowTask.EnterProgressFrame();
     }
@@ -108,25 +98,19 @@ void FUnLuaIntelliSenseGenerator::UpdateAll()
 
 bool FUnLuaIntelliSenseGenerator::IsBlueprint(const FAssetData& AssetData)
 {
-#if UE_VERSION_OLDER_THAN(5, 1, 0)
     const FName AssetClass = AssetData.AssetClass;
     return AssetClass == UBlueprint::StaticClass()->GetFName() || AssetClass == UWidgetBlueprint::StaticClass()->GetFName();
-#else
-    const auto AssetClassPath = AssetData.AssetClassPath.ToString();
-    return AssetClassPath == UBlueprint::StaticClass()->GetName() || AssetClassPath == UWidgetBlueprint::StaticClass()->GetName();
-#endif
 }
 
-bool FUnLuaIntelliSenseGenerator::ShouldExport(const FAssetData& AssetData, bool bLoad)
+bool FUnLuaIntelliSenseGenerator::ShouldExport(const FAssetData& AssetData)
 {
     const auto& Settings = *GetDefault<UUnLuaEditorSettings>();
     if (!Settings.bGenerateIntelliSense)
         return false;
 
-    if (!IsBlueprint(AssetData))
-        return false;
+    
 
-    const auto Asset = AssetData.FastGetAsset(bLoad);
+    const auto Asset = AssetData.FastGetAsset();
     if (!Asset)
         return false;
 
@@ -142,7 +126,16 @@ bool FUnLuaIntelliSenseGenerator::ShouldExport(const FAssetData& AssetData, bool
 
 void FUnLuaIntelliSenseGenerator::Export(const UBlueprint* Blueprint)
 {
-    Export(Blueprint->GeneratedClass);
+    const FString BPName = Blueprint->GetName();
+    const FString Content = UnLua::IntelliSense::Get(Blueprint);
+    SaveFile("/Game", BPName, Content);
+}
+
+void FUnLuaIntelliSenseGenerator::Export2(const UBlueprint* Blueprint)
+{
+    const FString BPName = Blueprint->GetName();
+    const FString Content = UnLua::IntelliSense::Get(Blueprint);
+    SaveFile("/Blueprints", BPName, Content);
 }
 
 void FUnLuaIntelliSenseGenerator::Export(const UField* Field)
@@ -152,16 +145,8 @@ void FUnLuaIntelliSenseGenerator::Export(const UField* Field)
 #else
     const UPackage* Package = (UPackage*)Field->GetTypedOuter(UPackage::StaticClass());
 #endif
-    auto ModuleName = Package->GetName();
-    if (!Field->IsNative())
-    {
-        int32 LastSlashIndex;
-        if (ModuleName.FindLastChar('/', LastSlashIndex))
-            ModuleName.LeftInline(LastSlashIndex);
-    }
-    FString FileName = UnLua::IntelliSense::GetTypeName(Field);
-    if (FileName.EndsWith("_C"))
-        FileName.LeftChopInline(2);
+    const FString ModuleName = Package->GetName();
+    const FString FileName = UnLua::IntelliSense::GetTypeName(Field);
     const FString Content = UnLua::IntelliSense::Get(Field);
     SaveFile(ModuleName, FileName, Content);
 }
@@ -169,7 +154,7 @@ void FUnLuaIntelliSenseGenerator::Export(const UField* Field)
 void FUnLuaIntelliSenseGenerator::ExportUE(const TArray<const UField*> Types)
 {
     const FString Content = UnLua::IntelliSense::GetUE(Types);
-    SaveFile("", "UE", Content);
+    SaveFile("", "UE4", Content);
 }
 
 void FUnLuaIntelliSenseGenerator::ExportUnLua()
@@ -225,12 +210,12 @@ void FUnLuaIntelliSenseGenerator::SaveFile(const FString& ModuleName, const FStr
     const FString Directory = OutputDir / ModuleName;
     if (!FileManager.DirectoryExists(*Directory))
         FileManager.MakeDirectory(*Directory);
-
+             
     const FString FilePath = FString::Printf(TEXT("%s/%s.lua"), *Directory, *FileName);
     FString FileContent;
     FFileHelper::LoadFileToString(FileContent, *FilePath);
     if (FileContent != GeneratedFileContent)
-        FFileHelper::SaveStringToFile(GeneratedFileContent, *FilePath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
+        FFileHelper::SaveStringToFile(GeneratedFileContent, *FilePath);
 }
 
 void FUnLuaIntelliSenseGenerator::DeleteFile(const FString& ModuleName, const FString& FileName)
@@ -249,7 +234,8 @@ void FUnLuaIntelliSenseGenerator::OnAssetAdded(const FAssetData& AssetData)
 {
     if (!ShouldExport(AssetData))
         return;
-
+     if(AssetData.PackagePath.ToString().StartsWith(TEXT("/Engine")))
+        return;
     OnAssetUpdated(AssetData);
 
     TArray<const UField*> Types;
@@ -262,7 +248,7 @@ void FUnLuaIntelliSenseGenerator::OnAssetRemoved(const FAssetData& AssetData)
     if (!ShouldExport(AssetData))
         return;
 
-    DeleteFile(FString("/Game"), AssetData.AssetName.ToString());
+    DeleteFile(FString("/Blueprints"), AssetData.AssetName.ToString());
 }
 
 void FUnLuaIntelliSenseGenerator::OnAssetRenamed(const FAssetData& AssetData, const FString& OldPath)
@@ -272,7 +258,7 @@ void FUnLuaIntelliSenseGenerator::OnAssetRenamed(const FAssetData& AssetData, co
 
     //remove old Blueprint name
     const FString OldPackageName = FPackageName::GetShortName(OldPath);
-    DeleteFile("/Game", OldPackageName);
+    DeleteFile("/Blueprints", OldPackageName);
 
     //update new name 
     OnAssetUpdated(AssetData);
@@ -280,12 +266,20 @@ void FUnLuaIntelliSenseGenerator::OnAssetRenamed(const FAssetData& AssetData, co
 
 void FUnLuaIntelliSenseGenerator::OnAssetUpdated(const FAssetData& AssetData)
 {
-    if (!ShouldExport(AssetData, true))
-        return;
-
+    if (!ShouldExport(AssetData))
+        return;    
     UBlueprint* Blueprint = LoadObject<UBlueprint>(nullptr, *AssetData.ObjectPath.ToString());
     if (!Blueprint)
         return;
+    if(AssetData.PackagePath.ToString().Contains(TEXT("/UI")))
+        Export2(Blueprint);
+    else
+    {
+        UClass *Class = Blueprint->GeneratedClass;
+        if (Class->ImplementsInterface(UUnLuaInterface::StaticClass()))
+        {
+            Export2(Blueprint);
+        }
+    }
 
-    Export(Blueprint);
 }

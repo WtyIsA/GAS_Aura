@@ -110,15 +110,6 @@ namespace UnLua
             // declaration
             Ret += FString::Printf(TEXT("local %s = {}\r\n"), *EscapeSymbolName(TypeName));
 
-            // exported functions
-            const auto Exported = GetExportedReflectedClasses().Find(TypeName);
-            if (Exported)
-            {
-                TArray<IExportedFunction*> ExportedFunctions;
-                (*Exported)->GetFunctions(ExportedFunctions);
-                for (const auto Function : ExportedFunctions)
-                    Function->GenerateIntelliSense(Ret);
-            }
             return Ret;
         }
 
@@ -281,7 +272,7 @@ namespace UnLua
 
         FString GetUE(const TArray<const UField*> AllTypes)
         {
-            FString Content = "UE = {";
+            FString Content = "UE4 = {";
 
             for (const auto Type : AllTypes)
             {
@@ -302,7 +293,11 @@ namespace UnLua
             if (!Field)
                 return "";
             if (!Field->IsNative() && Field->GetName().EndsWith("_C"))
-                return Field->GetName();
+            {
+                FString name= Field->GetName();
+                name.LeftChopInline(2);
+                return name;
+            }
             const UStruct* Struct = Cast<UStruct>(Field);
             if (Struct)
                 return Struct->GetPrefixCPP() + Struct->GetName();
