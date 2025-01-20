@@ -36,8 +36,6 @@ void ULuaDelegateHandler::BindTo(FScriptDelegate* InDelegate)
 
 void ULuaDelegateHandler::AddTo(FMulticastDelegateProperty* InProperty, void* InDelegate)
 {
-    check(InDelegate);
-
     Delegate = InDelegate;
     FScriptDelegate DynamicDelegate;
     DynamicDelegate.BindUFunction(this, NAME_Dummy);
@@ -57,6 +55,15 @@ void ULuaDelegateHandler::RemoveFrom(FMulticastDelegateProperty* InProperty, voi
     DynamicDelegate.BindUFunction(this, NAME_Dummy);
     TMulticastDelegateTraits<FMulticastDelegateType>::RemoveDelegate(InProperty, MoveTemp(DynamicDelegate), nullptr, InDelegate);
 }
+
+bool ULuaDelegateHandler::Contain(FMulticastDelegateProperty* InProperty, void* InDelegate)
+{
+    FScriptDelegate DynamicDelegate;
+    DynamicDelegate.BindUFunction(this, NAME_Dummy);
+    return  TMulticastDelegateTraits<FMulticastDelegateType>::ContainDelegate(InProperty, MoveTemp(DynamicDelegate), nullptr, InDelegate);
+ 
+}
+
 
 void ULuaDelegateHandler::BeginDestroy()
 {

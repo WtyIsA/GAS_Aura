@@ -12,22 +12,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 // See the License for the specific language governing permissions and limitations under the License.
 
-#include "LowLevel.h"
 #include "UnLuaEx.h"
 #include "LuaCore.h"
 #include "Containers/LuaMap.h"
-
-static FORCEINLINE void TMap_Guard(lua_State* L, FLuaMap* Map)
-{
-    if (!Map)
-        luaL_error(L, "invalid TMap");
-
-    if (!Map->KeyInterface->IsValid())
-        luaL_error(L, TCHAR_TO_UTF8(*FString::Printf(TEXT("invalid TMap key type:%s"), *Map->KeyInterface->GetName())));
-
-    if (!Map->ValueInterface->IsValid())
-        luaL_error(L, TCHAR_TO_UTF8(*FString::Printf(TEXT("invalid TMap value type:%s"), *Map->ValueInterface->GetName())));
-}
 
 static int32 TMap_New(lua_State* L)
 {
@@ -35,17 +22,16 @@ static int32 TMap_New(lua_State* L)
     if (NumParams != 3)
         return luaL_error(L, "invalid parameters");
 
-    auto& Env = UnLua::FLuaEnv::FindEnvChecked(L);
-    auto KeyType = Env.GetPropertyRegistry()->CreateTypeInterface(L, 2);
-    if (!KeyType)
+    TSharedPtr<UnLua::ITypeInterface> KeyInterface(CreateTypeInterface(L, 2));
+    if (!KeyInterface)
         return luaL_error(L, "invalid key type");
 
-    auto ValueType = Env.GetPropertyRegistry()->CreateTypeInterface(L, 3);
-    if (!ValueType)
+    TSharedPtr<UnLua::ITypeInterface> ValueInterface(CreateTypeInterface(L, 3));
+    if (!ValueInterface)
         return luaL_error(L, "invalid value type");
 
-    auto Registry = Env.GetContainerRegistry();
-    Registry->NewMap(L, KeyType, ValueType, FLuaMap::OwnedBySelf);
+    auto Registry = UnLua::FLuaEnv::FindEnvChecked(L).GetContainerRegistry();
+    Registry->NewMap(L, KeyInterface, ValueInterface, FLuaMap::OwnedBySelf);
 
     return 1;
 }
@@ -61,7 +47,8 @@ static int TMap_Enumerable(lua_State* L)
         return luaL_error(L, "invalid enumerator");
 
     const auto Map = (*Enumerator)->LuaMap;
-    TMap_Guard(L, Map);
+    if (!Map)
+        return luaL_error(L, "invalid TMap");
 
     while ((*Enumerator)->Index < Map->GetMaxIndex())
     {
@@ -71,8 +58,8 @@ static int TMap_Enumerable(lua_State* L)
         }
         else
         {
-            Map->KeyInterface->ReadValue(L, Map->GetData((*Enumerator)->Index), false);
-            Map->ValueInterface->ReadValue(L, Map->GetData((*Enumerator)->Index) + Map->MapLayout.ValueOffset, false);
+            Map->KeyInterface->Read(L, Map->GetData((*Enumerator)->Index), false);
+            Map->ValueInterface->Read(L, Map->GetData((*Enumerator)->Index) + Map->MapLayout.ValueOffset - Map->ValueInterface->GetOffset(), false);
             ++(*Enumerator)->Index;
             return 2;
         }
@@ -87,11 +74,9 @@ static int32 TMap_Pairs(lua_State* L)
     if (NumParams != 1)
         return luaL_error(L, "invalid parameters");
 
-    FLuaMap* Map = (FLuaMap*)GetCppInstanceFast(L, 1);
+    FLuaMap* Map = (FLuaMap*)(GetCppInstanceFast(L, 1));
     if (!Map)
-        return UnLua::LowLevel::PushEmptyIterator(L);
-
-    TMap_Guard(L, Map);
+        return 0;
 
     lua_pushcfunction(L, TMap_Enumerable);
     FLuaMap::FLuaMapEnumerator** Enumerator = (FLuaMap::FLuaMapEnumerator**)lua_newuserdata(L, sizeof(FLuaMap::FLuaMapEnumerator*));
@@ -116,7 +101,8 @@ static int32 TMap_Length(lua_State* L)
         return luaL_error(L, "invalid parameters");
 
     FLuaMap* Map = (FLuaMap*)(GetCppInstanceFast(L, 1));
-    TMap_Guard(L, Map);
+    if (!Map)
+        return luaL_error(L, "invalid TMap");
 
     lua_pushinteger(L, Map->Num());
     return 1;
@@ -132,13 +118,14 @@ static int32 TMap_Add(lua_State* L)
         return luaL_error(L, "invalid parameters");
 
     FLuaMap* Map = (FLuaMap*)(GetCppInstanceFast(L, 1));
-    TMap_Guard(L, Map);
+    if (!Map)
+        return luaL_error(L, "invalid TMap");
 
     void* ValueCache = (uint8*)Map->ElementCache + Map->MapLayout.ValueOffset;
     Map->KeyInterface->Initialize(Map->ElementCache);
     Map->ValueInterface->Initialize(ValueCache);
-    Map->KeyInterface->WriteValue_InContainer(L, Map->ElementCache, 2);
-    Map->ValueInterface->WriteValue_InContainer(L, Map->ValueInterface->GetOffset() > 0 ? Map->ElementCache : ValueCache, 3);
+    Map->KeyInterface->Write(L, Map->ElementCache, 2);
+    Map->ValueInterface->Write(L, Map->ValueInterface->GetOffset() > 0 ? Map->ElementCache : ValueCache, 3);
     Map->Add(Map->ElementCache, ValueCache);
     Map->KeyInterface->Destruct(Map->ElementCache);
     Map->ValueInterface->Destruct(ValueCache);
@@ -155,10 +142,11 @@ static int32 TMap_Remove(lua_State* L)
         return luaL_error(L, "invalid parameters");
 
     FLuaMap* Map = (FLuaMap*)(GetCppInstanceFast(L, 1));
-    TMap_Guard(L, Map);
+    if (!Map)
+        return luaL_error(L, "invalid TMap");
 
     Map->KeyInterface->Initialize(Map->ElementCache);
-    Map->KeyInterface->WriteValue_InContainer(L, Map->ElementCache, 2);
+    Map->KeyInterface->Write(L, Map->ElementCache, 2);
     bool bSuccess = Map->Remove(Map->ElementCache);
     Map->KeyInterface->Destruct(Map->ElementCache);
     lua_pushboolean(L, bSuccess);
@@ -175,16 +163,17 @@ static int32 TMap_Find(lua_State* L)
         return luaL_error(L, "invalid parameters");
 
     FLuaMap* Map = (FLuaMap*)(GetCppInstanceFast(L, 1));
-    TMap_Guard(L, Map);
+    if (!Map)
+        return luaL_error(L, "invalid TMap");
 
     void* ValueCache = (uint8*)Map->ElementCache + Map->MapLayout.ValueOffset;
     Map->KeyInterface->Initialize(Map->ElementCache);
     Map->ValueInterface->Initialize(ValueCache);
-    Map->KeyInterface->WriteValue_InContainer(L, Map->ElementCache, 2);
+    Map->KeyInterface->Write(L, Map->ElementCache, 2);
     bool bSuccess = Map->Find(Map->ElementCache, ValueCache);
     if (bSuccess)
     {
-        Map->ValueInterface->ReadValue_InContainer(L, Map->ValueInterface->GetOffset() > 0 ? Map->ElementCache : ValueCache, true);
+        Map->ValueInterface->Read(L, Map->ValueInterface->GetOffset() > 0 ? Map->ElementCache : ValueCache, true);
     }
     else
     {
@@ -205,14 +194,16 @@ static int32 TMap_FindRef(lua_State* L)
         return luaL_error(L, "invalid parameters");
 
     FLuaMap* Map = (FLuaMap*)(GetCppInstanceFast(L, 1));
-    TMap_Guard(L, Map);
+    if (!Map)
+        return luaL_error(L, "invalid TMap");
 
     Map->KeyInterface->Initialize(Map->ElementCache);
-    Map->KeyInterface->WriteValue_InContainer(L, Map->ElementCache, 2);
+    Map->KeyInterface->Write(L, Map->ElementCache, 2);
     void* Value = Map->Find(Map->ElementCache);
     if (Value)
     {
-        Map->ValueInterface->ReadValue(L, Value, false);
+        const void* Key = (uint8*)Value - Map->ValueInterface->GetOffset();
+        Map->ValueInterface->Read(L, Key, false);
     }
     else
     {
@@ -232,7 +223,8 @@ static int32 TMap_Clear(lua_State* L)
         return luaL_error(L, "invalid parameters");
 
     FLuaMap* Map = (FLuaMap*)(GetCppInstanceFast(L, 1));
-    TMap_Guard(L, Map);
+    if (!Map)
+        return luaL_error(L, "invalid TMap");
 
     Map->Clear();
     return 0;
@@ -248,7 +240,8 @@ static int32 TMap_Keys(lua_State* L)
         return luaL_error(L, "invalid parameters");
 
     FLuaMap* Map = (FLuaMap*)(GetCppInstanceFast(L, 1));
-    TMap_Guard(L, Map);
+    if (!Map)
+        return luaL_error(L, "invalid TMap");
 
     void* Userdata = NewUserdataWithPadding(L, sizeof(FLuaArray), "TArray");
     FLuaArray* Array = Map->Keys(Userdata);
@@ -265,7 +258,8 @@ static int32 TMap_Values(lua_State* L)
         return luaL_error(L, "invalid parameters");
 
     FLuaMap* Map = (FLuaMap*)(GetCppInstanceFast(L, 1));
-    TMap_Guard(L, Map);
+    if (!Map)
+        return luaL_error(L, "invalid TMap");
 
     void* Userdata = NewUserdataWithPadding(L, sizeof(FLuaArray), "TArray");
     FLuaArray* Array = Map->Values(Userdata);
@@ -283,7 +277,7 @@ static int32 TMap_Delete(lua_State* L)
 
     FLuaMap* Map = (FLuaMap*)(GetCppInstanceFast(L, 1));
     if (!Map)
-        return 0;
+        return luaL_error(L, "invalid TMap");
 
     auto Registry = UnLua::FLuaEnv::FindEnvChecked(L).GetContainerRegistry();
     Registry->Remove(Map);
@@ -302,7 +296,8 @@ static int32 TMap_ToTable(lua_State* L)
         return luaL_error(L, "invalid parameters");
 
     FLuaMap* Map = (FLuaMap*)(GetCppInstanceFast(L, 1));
-    TMap_Guard(L, Map);
+    if (!Map)
+        return luaL_error(L, "invalid TMap");
 
     void* MemData = FMemory::Malloc(sizeof(FLuaArray), alignof(FLuaArray));
     FLuaArray* Keys = Map->Keys(MemData);
@@ -311,14 +306,14 @@ static int32 TMap_ToTable(lua_State* L)
     for (int32 i = 0; i < Keys->Num(); ++i)
     {
         Keys->Get(i, Keys->ElementCache);
-        Keys->Inner->ReadValue_InContainer(L, Keys->ElementCache, true);
+        Keys->Inner->Read(L, Keys->ElementCache, true);
 
         void* ValueCache = (uint8*)Map->ElementCache + Map->MapLayout.ValueOffset;
         Map->ValueInterface->Initialize(ValueCache);
         bool bSuccess = Map->Find(Keys->ElementCache, ValueCache);
         if (bSuccess)
         {
-            Map->ValueInterface->ReadValue_InContainer(L, Map->ValueInterface->GetOffset() > 0 ? Map->ElementCache : ValueCache, true);
+            Map->ValueInterface->Read(L, Map->ValueInterface->GetOffset() > 0 ? Map->ElementCache : ValueCache, true);
         }
         else
         {

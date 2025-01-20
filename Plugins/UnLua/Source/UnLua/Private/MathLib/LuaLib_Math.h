@@ -357,8 +357,8 @@ namespace UnLua
                 {
                     uint64 Type1 = GetTypeHash(L, 1);
                     uint64 Type2 = GetTypeHash(L, 2);
-                    if (!Type1 || !Type2 || Type1 != Type2)
-                        return luaL_error(L, "invalid parameters, incompatible types");
+                    //if (!Type1 || !Type2 || Type1 != Type2)
+                    //    return luaL_error(L, "invalid parameters, incompatible types");
 
                     T* B = (T*)GetCppInstanceFast(L, 2);
                     TMathCalculationHelper<FT, ST, OperatorType, ScalarOperatorType, TMathTypeTraits<T>::NUM_FIELDS>::Calculate(reinterpret_cast<FT*>(Result), reinterpret_cast<FT*>(A), reinterpret_cast<FT*>(B), OperatorType());

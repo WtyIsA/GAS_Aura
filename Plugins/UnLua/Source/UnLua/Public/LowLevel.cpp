@@ -14,17 +14,12 @@
 
 #include "LowLevel.h"
 #include "LuaCore.h"
+#include "LuaMessageTableOptInC.h"
 
 namespace UnLua
 {
     namespace LowLevel
     {
-        int EmptyIterator(lua_State* L)
-        {
-            lua_pushnil(L);
-            return 1;
-        }
-
         /**
          * Create weak key table
          */
@@ -53,9 +48,17 @@ namespace UnLua
 
         FString GetMetatableName(const UObject* Object)
         {
-            if (!Object)
+            if (!Object || !IsValid(Object))
                 return "";
-
+#if !UE_SERVER
+            if(Object->IsUnreachable() || !IsUObjectValid((UObject*)Object))
+            {
+                CLuaMessageTableOptInC::OnlyPrintLuaTrackback();                             
+                UE_LOG(LogUnLua,Warning,TEXT("[UnLua]Object is gc? IsUnreachable=%d ,Flags=0x%0x"), Object->IsUnreachable(), Object->GetFlags())
+                return "";
+            }
+#endif            
+                
             if (UNLIKELY(Object->IsA<UEnum>()))
             {
                 return Object->IsNative() ? Object->GetName() : Object->GetPathName();
@@ -92,16 +95,21 @@ namespace UnLua
                     return true;
 
                 auto Names = (TSet<FName>*)Userdata;
+#if SUPPORTS_RPC_CALL
                 FString FuncName(lua_tostring(L, -2));
                 if (FuncName.EndsWith(TEXT("_RPC")))
                     FuncName = FuncName.Left(FuncName.Len() - 4);
                 Names->Add(FName(*FuncName));
+#else
+                Names->Add(FName(lua_tostring(L, -2)));
+#endif
+                
                 return true;
-            };
-
+            }; 
+            
             auto N = 1;
             bool bNext;
-            do
+            do 
             {
                 bNext = TraverseTable(L, -1, &FunctionNames, GetFunctionName) > INDEX_NONE;
                 if (bNext)
@@ -111,8 +119,7 @@ namespace UnLua
                     ++N;
                     bNext = lua_istable(L, -1);
                 }
-            }
-            while (bNext);
+            } while (bNext);
             lua_pop(L, N);
         }
 
@@ -130,92 +137,6 @@ namespace UnLua
             lua_remove(L, -2);
             lua_remove(L, -2);
             return Type;
-        }
-
-        bool CheckPropertyOwner(lua_State* L, UnLua::ITypeOps* InProperty, void* InContainerPtr)
-        {
-#if ENABLE_TYPE_CHECK == 1
-            if (InProperty->StaticExported)
-                return true;
-
-            UnLua::ITypeInterface* TypeInterface = (UnLua::ITypeInterface*)InProperty;
-            FProperty* Property = TypeInterface->GetUProperty();
-            if (!Property)
-                return true;
-
-            UObject* Object = (UObject*)InContainerPtr;
-            UClass* OwnerClass = Property->GetOwnerClass();
-            if (!OwnerClass)
-                return true;
-
-            if (Object->IsA(OwnerClass))
-                return true;
-
-            luaL_error(L, TCHAR_TO_UTF8(*FString::Printf(TEXT("Access property from invalid owner. %s should be a %s."), *Object->GetName(), *OwnerClass->GetName())));
-            return false;
-#else
-            return true;
-#endif
-        }
-
-        void* GetUserdata(lua_State* L, int32 Index, bool* OutTwoLvlPtr, bool *OutClassMetatable)
-        {
-            Index = AbsIndex(L, Index);
-
-            void* Userdata = nullptr;
-            bool bTwoLvlPtr = false, bClassMetatable = false;
-
-            int32 Type = lua_type(L, Index);
-            switch (Type)
-            {
-            case LUA_TTABLE:
-                {
-                    lua_pushstring(L, "Object");
-                    Type = lua_rawget(L, Index);
-                    if (Type == LUA_TUSERDATA)
-                    {
-                        Userdata = lua_touserdata(L, -1); // get the raw UObject
-                    }
-                    else
-                    {
-                        lua_pop(L, 1);
-                        lua_pushstring(L, "ClassDesc");
-                        Type = lua_rawget(L, Index);
-                        if (Type == LUA_TLIGHTUSERDATA)
-                        {
-                            Userdata = lua_touserdata(L, -1); // get the 'FClassDesc' pointer
-                            bClassMetatable = true;
-                        }
-                    }
-                    bTwoLvlPtr = true; // set two level pointer flag
-                    lua_pop(L, 1);
-                }
-                break;
-            case LUA_TUSERDATA:
-                Userdata = GetUserdataFast(L, Index, &bTwoLvlPtr); // get the userdata pointer
-                break;
-            default:
-                break;
-            }
-
-            if (OutTwoLvlPtr)
-                *OutTwoLvlPtr = bTwoLvlPtr;
-
-            if (OutClassMetatable)
-                *OutClassMetatable = bClassMetatable;
-
-            return Userdata;
-        }
-
-        uint8 CalculateUserdataPadding(UStruct* Struct)
-        {
-            const auto ScriptStruct = Cast<UScriptStruct>(Struct);
-            if (!ScriptStruct)
-                return 0;
-
-            const auto CppStructOps = ScriptStruct->GetCppStructOps();
-            const auto Alignment = CppStructOps ? CppStructOps->GetAlignment() : ScriptStruct->GetMinAlignment();
-            return CalcUserdataPadding(Alignment);
         }
     }
 }

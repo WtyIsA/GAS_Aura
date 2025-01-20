@@ -29,13 +29,13 @@ namespace UnLua
     public:
         explicit FContainerRegistry(FLuaEnv* Env);
 
-        FLuaArray* NewArray(lua_State* L, TSharedPtr<ITypeInterface> ElementType, FLuaArray::EScriptArrayFlag Flag);
+        FLuaArray* NewArray(lua_State* L, TSharedPtr<ITypeInterface> ElementType, FLuaArray::EScriptArrayFlag Flag, TLuaContainerInterface<FLuaArray> *InArrayInterface = nullptr);
 
         FLuaSet* NewSet(lua_State* L, TSharedPtr<ITypeInterface> ElementType, FLuaSet::FScriptSetFlag Flag);
 
         FLuaMap* NewMap(lua_State* L, TSharedPtr<ITypeInterface> KeyType, TSharedPtr<ITypeInterface> ValueType, FLuaMap::FScriptMapFlag Flag);
         
-        void FindOrAdd(lua_State* L, FScriptArray* ContainerPtr, TSharedPtr<ITypeInterface> ElementType);
+        void FindOrAdd(lua_State* L, FScriptArray* ContainerPtr, TSharedPtr<ITypeInterface> ElementType, TLuaContainerInterface<FLuaArray> *InArrayInterface = nullptr);
 
         void FindOrAdd(lua_State* L, FScriptSet* ContainerPtr, TSharedPtr<ITypeInterface> ElementType);
 

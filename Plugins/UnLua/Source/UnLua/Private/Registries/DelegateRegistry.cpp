@@ -16,6 +16,7 @@
 #include "LuaDelegateHandler.h"
 #include "ObjectReferencer.h"
 #include "LuaEnv.h"
+#include "LuaMessageTableOptInC.h"
 
 namespace UnLua
 {
@@ -56,8 +57,6 @@ namespace UnLua
             else
                 Unbind(Pair.Key);
             Delegates.Remove(Pair.Key);
-            if (Pair.Value.bDeleteOnRemove)
-                delete (FScriptDelegate*)Pair.Key;
         }
 
         TArray<FLuaDelegatePair> ToRemove;
@@ -65,6 +64,16 @@ namespace UnLua
         {
             if (Pair.Key.SelfObject.IsStale())
             {
+                ToRemove.Add(Pair.Key);
+                Env->AutoObjectReference.Remove(Pair.Value.Get());
+            }
+            else if(Pair.Value->RefCount <= 0)
+            {
+                for(auto& item:Delegates)
+                {
+                    if(item.Value.Handlers.Contains(Pair.Value))
+                        item.Value.Handlers.Remove(Pair.Value);
+                }
                 ToRemove.Add(Pair.Key);
                 Env->AutoObjectReference.Remove(Pair.Value.Get());
             }
@@ -82,51 +91,11 @@ namespace UnLua
         }
     }
 
-    FScriptDelegate* FDelegateRegistry::Register(FScriptDelegate* Delegate, FDelegateProperty* Property)
-    {
-        auto Cloned = new FScriptDelegate();
-        *Cloned = *Delegate;
-        FDelegateInfo NewInfo;
-        NewInfo.Property = Property;
-        NewInfo.Desc = nullptr;
-        NewInfo.SignatureFunction = CastField<FDelegateProperty>(Property)->SignatureFunction;
-        NewInfo.bDeleteOnRemove = true;
-        NewInfo.bIsMulticast = false;
-        NewInfo.Owner = nullptr;
-        Delegates.Add(Cloned, NewInfo);
-        return Cloned;
-    }
-
     void FDelegateRegistry::NotifyHandlerBeginDestroy(ULuaDelegateHandler* Handler)
     {
         const auto L = Env->GetMainState();
         luaL_unref(L, LUA_REGISTRYINDEX, Handler->LuaRef);
         Handler->Reset();
-    }
-
-    void FDelegateRegistry::CheckSignatureCompatible(lua_State* L, ULuaDelegateHandler* Handler, void* OtherDelegate)
-    {
-        check(L);
-        check(Handler);
-
-        if (!CheckSignatureCompatible(Handler->Delegate, OtherDelegate))
-            luaL_error(L, "delegate handler signatures are not compatible");
-    }
-
-    bool FDelegateRegistry::CheckSignatureCompatible(void* ADelegate, void* BDelegate)
-    {
-        if (ADelegate == BDelegate)
-            return true;
-
-        auto AInfo = Delegates.Find(ADelegate);
-        auto BInfo = Delegates.Find(BDelegate);
-        if (!AInfo || !BInfo)
-            return true;
-
-        if (!AInfo->SignatureFunction || !BInfo->SignatureFunction)
-            return false;
-
-        return AInfo->SignatureFunction->IsSignatureCompatibleWith(BInfo->SignatureFunction);
     }
 
 #pragma region FScriptDelgate
@@ -145,7 +114,6 @@ namespace UnLua
             FDelegateInfo NewInfo;
             NewInfo.Property = Property;
             NewInfo.Desc = nullptr;
-            NewInfo.bDeleteOnRemove = false;
             if (const auto MulticastProperty = CastField<FMulticastDelegateProperty>(Property))
             {
                 NewInfo.SignatureFunction = MulticastProperty->SignatureFunction;
@@ -173,14 +141,26 @@ namespace UnLua
         if (!Info.Owner.IsValid())
             Info.Owner = SelfObject;
 
-        const auto DelegatePair = FLuaDelegatePair(SelfObject, LuaFunction);
+        auto DelegatePair = FLuaDelegatePair(SelfObject, LuaFunction);
         const auto Cached = CachedHandlers.Find(DelegatePair);
         if (Cached && Cached->IsValid())
         {
             (*Cached)->BindTo(Delegate);
             Info.Handlers.Add(*Cached);
+            (*Cached)->RefCount++;
             return;
         }
+#if WITH_EDITOR
+        lua_Debug ar;
+        int line = 0;
+        const char* name = "";
+        if (lua_getstack(L, 1, &ar)) {
+            lua_getinfo(L, "nSl", &ar);
+            line = ar.currentline;
+            name = ar.source;
+        } 
+        DelegatePair.luaFunPath = FString::Printf(TEXT("LuaFunc_[%s:%d]_CppDelegate"), ANSI_TO_TCHAR(name), line);
+#endif
 
         lua_pushvalue(L, Index);
         const auto Ref = luaL_ref(L, LUA_REGISTRYINDEX);
@@ -202,7 +182,11 @@ namespace UnLua
             if (!Handler.IsValid())
                 continue;
             if (!Info->Owner.IsStale())
+            {
+                if(((FScriptDelegate*)Delegate)->IsBound())
+                    Handler->RefCount--;
                 ((FScriptDelegate*)Delegate)->Unbind();
+            }
         }
         Info->Handlers.Empty();
     }
@@ -215,6 +199,10 @@ namespace UnLua
 
         if (Handler->SelfObject.IsStale())
             return;
+        if(Handler->RefCount <= 0)
+        {
+            UE_LOG(LogUnLua,Warning,TEXT("FDelegateRegistry::Execute refcount=%d"), Handler->RefCount)
+        }
 
         const auto L = Env->GetMainState();
         SignatureDesc->CallLua(L, Handler->LuaRef, Params, Handler->SelfObject.Get());
@@ -242,16 +230,27 @@ namespace UnLua
             Info.Owner = SelfObject;
 
         const auto LuaFunction = lua_topointer(L, Index);
-        const auto DelegatePair = FLuaDelegatePair(SelfObject, LuaFunction);
+        auto DelegatePair = FLuaDelegatePair(SelfObject, LuaFunction);
         const auto Cached = CachedHandlers.Find(DelegatePair);
         if (Cached && Cached->IsValid())
         {
-            CheckSignatureCompatible(L, Cached->Get(), Delegate);
             (*Cached)->AddTo(Info.MulticastProperty, Delegate);
             Info.Handlers.Add(*Cached);
+            (*Cached)->RefCount++;
             return;
         }
-
+#if WITH_EDITOR
+        lua_Debug ar;
+        int line = 0;
+        const char* name = "";
+        if (lua_getstack(L, 1, &ar)) {
+            lua_getinfo(L, "nSl", &ar);
+            line = ar.currentline;
+            name = ar.source;
+        }
+        DelegatePair.luaFunPath = FString::Printf(TEXT("LuaFunc_[%s:%d]_CppDelegate"), ANSI_TO_TCHAR(name), line);
+#endif
+        
         lua_pushvalue(L, Index);
         const auto Ref = luaL_ref(L, LUA_REGISTRYINDEX);
         const auto Handler = CreateHandler(Ref, Info.Owner.Get(), SelfObject);
@@ -271,9 +270,16 @@ namespace UnLua
         const auto Cached = CachedHandlers.Find(DelegatePair);
         if (!Cached || !Cached->IsValid())
             return;
+        if((*Cached)->Contain(Info.MulticastProperty, Delegate))            
+            (*Cached)->RefCount--;
+        else
+        {
+            //UE_LOG(LogUnLua,Warning,TEXT("FDelegateRegistry remove not add %d"),(*Cached)->RefCount);
+            //CLuaMessageTableOptInC::OnlyPrintLuaTrackback("",L);
+        }
 
         (*Cached)->RemoveFrom(Info.MulticastProperty, Delegate);
-        Info.Handlers.Remove(*Cached);
+        Info.Handlers.Remove(*Cached);      
     }
 
     void FDelegateRegistry::Broadcast(lua_State* L, void* Delegate, int32 NumParams, int32 FirstParamIndex)
@@ -297,8 +303,11 @@ namespace UnLua
         {
             if (!Handler.IsValid())
                 continue;
+            Handler->RefCount--;
             if (Info->Owner.IsValid())
+            {                
                 Handler->RemoveFrom(Info->MulticastProperty, Delegate);
+            }
         }
 
         Info->Handlers.Empty();
@@ -322,9 +331,9 @@ namespace UnLua
         Ret->Registry = this;
         Ret->LuaRef = LuaRef;
         Ret->SelfObject = SelfObject ? SelfObject : Owner;
+        Ret->RefCount = 1;
         return Ret;
     }
-
     void FDelegateRegistry::ReleaseHandle(const UObject* Object)
     {
         if(!Object)

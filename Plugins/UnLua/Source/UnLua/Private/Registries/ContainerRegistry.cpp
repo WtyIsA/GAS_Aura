@@ -31,11 +31,11 @@ namespace UnLua
         lua_rawset(L, LUA_REGISTRYINDEX);
     }
 
-    FLuaArray* FContainerRegistry::NewArray(lua_State* L, TSharedPtr<ITypeInterface> ElementType, FLuaArray::EScriptArrayFlag Flag)
+    FLuaArray* FContainerRegistry::NewArray(lua_State* L, TSharedPtr<ITypeInterface> ElementType, FLuaArray::EScriptArrayFlag Flag,TLuaContainerInterface<FLuaArray> *InArrayInterface)
     {
         const FScriptArray* ScriptArray = new FScriptArray;
         void* Userdata = NewUserdata(L, FScriptContainerDesc::Array);
-        const auto Ret = new(Userdata) FLuaArray(ScriptArray, ElementType, Flag);
+        const auto Ret = new(Userdata) FLuaArray(ScriptArray, ElementType, Flag,InArrayInterface);
         return Ret;
     }
 
@@ -55,42 +55,27 @@ namespace UnLua
         return Ret;
     }
 
-    void FContainerRegistry::FindOrAdd(lua_State* L, FScriptArray* ContainerPtr, TSharedPtr<ITypeInterface> ElementType)
+    void FContainerRegistry::FindOrAdd(lua_State* L, FScriptArray* ContainerPtr, TSharedPtr<ITypeInterface> ElementType, TLuaContainerInterface<FLuaArray> *InArrayInterface)
     {
-        void* Userdata = CacheScriptContainer(L, ContainerPtr, FScriptContainerDesc::Array, [&](void* Cached)
-        {
-            const auto Array = (FLuaArray*)Cached;
-            return Array->Inner == ElementType;
-        });
-
+        void* Userdata = CacheScriptContainer(L, ContainerPtr, FScriptContainerDesc::Array);
         if (Userdata)
-            new(Userdata) FLuaArray(ContainerPtr, ElementType, FLuaArray::OwnedByOther);
+            new(Userdata) FLuaArray(ContainerPtr, ElementType, FLuaArray::OwnedByOther, InArrayInterface);
     }
 
     void FContainerRegistry::FindOrAdd(lua_State* L, FScriptSet* ContainerPtr, TSharedPtr<ITypeInterface> ElementType)
     {
-        void* Userdata = CacheScriptContainer(L, ContainerPtr, FScriptContainerDesc::Set, [&](void* Cached)
-        {
-            const auto Set = (FLuaSet*)Cached;
-            return Set->ElementInterface == ElementType;
-        });
-
+        void* Userdata = CacheScriptContainer(L, ContainerPtr, FScriptContainerDesc::Set);
         if (Userdata)
             new(Userdata) FLuaSet(ContainerPtr, ElementType, FLuaSet::OwnedByOther);
     }
 
     void FContainerRegistry::FindOrAdd(lua_State* L, FScriptMap* ContainerPtr, TSharedPtr<ITypeInterface> KeyType, TSharedPtr<ITypeInterface> ValueType)
     {
-        void* Userdata = CacheScriptContainer(L, ContainerPtr, FScriptContainerDesc::Map, [&](void* Cached)
-        {
-            const auto Map = (FLuaMap*)Cached;
-            return Map->KeyInterface == KeyType && Map->ValueInterface == ValueType;
-        });
-
+        void* Userdata = CacheScriptContainer(L, ContainerPtr, FScriptContainerDesc::Map);
         if (Userdata)
             new(Userdata) FLuaMap(ContainerPtr, KeyType, ValueType, FLuaMap::OwnedByOther);
     }
-
+    
     void FContainerRegistry::Remove(const FLuaArray* Container)
     {
         const auto L = Env->GetMainState();

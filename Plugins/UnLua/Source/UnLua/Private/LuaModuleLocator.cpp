@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and limitations under the License.
 
 #include "LuaModuleLocator.h"
+
+#include "UnLuaBase.h"
 #include "UnLuaInterface.h"
 
 FString ULuaModuleLocator::Locate(const UObject* Object)
@@ -39,7 +41,12 @@ FString ULuaModuleLocator::Locate(const UObject* Object)
         return "";
     }
 
-    return IUnLuaInterface::Execute_GetModuleName(CDO);
+    FString moduleName = IUnLuaInterface::Execute_GetModuleName(CDO);
+    if(moduleName.IsEmpty())
+    {
+        UE_LOG(LogUnLua,Warning,TEXT("[UnLua]ULuaModuleLocator::Locate moduleName empty. obj=%s"), *Object->GetName());
+    }
+    return moduleName;
 }
 
 FString ULuaModuleLocator_ByPackage::Locate(const UObject* Object)

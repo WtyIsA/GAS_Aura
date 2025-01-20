@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="4bd88cbd-6c57-4e31-a99c-879f3cb3b8c8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../.idea/.idea.Aura.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/.idea.Aura.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Script.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Script.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_Array.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_Array.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_Class.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_Class.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_DataTable.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_DataTable.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_Map.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_Map.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_MulticastDelegate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_MulticastDelegate.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_Object.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_Object.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_PrimitiveTypes.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_PrimitiveTypes.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_Set.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/BaseLib/LuaLib_Set.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/CollisionHelper.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/CollisionHelper.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Containers/LuaArray.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Containers/LuaArray.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Containers/LuaContainerInterface.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Containers/LuaContainerInterface.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Containers/LuaMap.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Containers/LuaMap.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/DefaultParamCollection.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/DefaultParamCollection.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/DefaultParamCollection.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/DefaultParamCollection.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/LuaCore.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/LuaCore.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/LuaCore.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/LuaCore.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/LuaDelegateHandler.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/LuaDelegateHandler.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/LuaEnv.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/LuaEnv.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/LuaFunction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/LuaFunction.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/LuaModuleLocator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/LuaModuleLocator.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/LuaValue.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/LuaValue.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/MathLib/LuaLib_FTransform.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/MathLib/LuaLib_FTransform.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/MathLib/LuaLib_FVector.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/MathLib/LuaLib_FVector.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/MathLib/LuaLib_Math.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/MathLib/LuaLib_Math.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ObjectReferencer.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ObjectReferencer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/ClassDesc.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/ClassDesc.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/ClassDesc.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/ClassDesc.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/EnumDesc.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/EnumDesc.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/EnumDesc.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/EnumDesc.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/FunctionDesc.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/FunctionDesc.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/FunctionDesc.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/FunctionDesc.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/PropertyDesc.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/PropertyDesc.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/PropertyDesc.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/ReflectionUtils/PropertyDesc.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/ClassRegistry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/ClassRegistry.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/ClassRegistry.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/ClassRegistry.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/ContainerRegistry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/ContainerRegistry.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/ContainerRegistry.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/ContainerRegistry.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/DelegateRegistry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/DelegateRegistry.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/DelegateRegistry.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/DelegateRegistry.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/EnumRegistry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/EnumRegistry.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/EnumRegistry.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/EnumRegistry.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/FunctionRegistry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/FunctionRegistry.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/ObjectRegistry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/Registries/ObjectRegistry.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UELib.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UELib.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UnLuaBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UnLuaBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UnLuaCompatibility.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UnLuaCompatibility.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UnLuaDebugBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UnLuaDebugBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UnLuaLib.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UnLuaLib.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UnLuaManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UnLuaManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UnLuaModule.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UnLuaModule.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UnLuaSettings.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Private/UnLuaSettings.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/LowLevel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/LowLevel.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/LowLevel.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/LowLevel.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/LuaDelegateHandler.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/LuaDelegateHandler.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/LuaEnv.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/LuaEnv.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/LuaFunction.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/LuaFunction.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/LuaMessageTableOptInC.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/LuaMessageTableOptInC.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/LuaValue.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/LuaValue.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaDebugBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaDebugBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaEx.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaEx.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaEx.inl" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaEx.inl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaLegacy.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaLegacy.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaSettings.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaTemplate.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/Public/UnLuaTemplate.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/UnLua.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Plugins/UnLua/Source/UnLua/UnLua.Build.cs" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="NewLua" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2lsiNkPmy6veR2TLRLXKG9dmLMK" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Emmy Debugger(NEW).Unnamed.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\wty\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\wty\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\wty\\AppData\\Local\\Symbols\\src&quot;
+    ]
+  }
+}</component>
+  <component name="RunManager">
+    <configuration name="Unnamed" type="lua.emmy.debugger" factoryName="Emmy Debugger(NEW)" nameIsGenerated="true">
+      <module name="rider.module" />
+      <option name="TYPE" value="0" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="9966" />
+      <option name="PIPE" value="emmy" />
+      <option name="WIN_ARCH" value="1" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4bd88cbd-6c57-4e31-a99c-879f3cb3b8c8" name="Changes" comment="" />
+      <created>1725975146819</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1725975146819</updated>
+      <workItem from="1725975147937" duration="35000" />
+      <workItem from="1725975420234" duration="3619000" />
+      <workItem from="1737036615591" duration="3002000" />
+      <workItem from="1737119270269" duration="9073000" />
+      <workItem from="1737292896772" duration="5316000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+</project>

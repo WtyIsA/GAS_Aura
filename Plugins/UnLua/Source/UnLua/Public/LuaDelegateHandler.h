@@ -46,6 +46,8 @@ public:
 
     void RemoveFrom(FMulticastDelegateProperty* InProperty, void* InDelegate);
 
+    bool Contain(FMulticastDelegateProperty* InProperty, void* InDelegate);
+
     virtual void BeginDestroy() override;
 
     void Reset();

@@ -54,16 +54,23 @@ public:
         OwnedBySelf,    // 'ScriptArray' is owned by self, it'll be freed in destructor
     };
 
-    FLuaArray(const FScriptArray* InScriptArray, TSharedPtr<UnLua::ITypeInterface> InInnerInterface, EScriptArrayFlag Flag = OwnedByOther)
-        : ScriptArray((FScriptArray*)InScriptArray), Inner(InInnerInterface), ElementCache(nullptr), ElementSize(Inner->GetSize()), ScriptArrayFlag(Flag)
+    FLuaArray(const FScriptArray *InScriptArray, TSharedPtr<UnLua::ITypeInterface> InInnerInterface, EScriptArrayFlag Flag = OwnedByOther, TLuaContainerInterface<FLuaArray> *InArrayInterface = nullptr)
+        : ScriptArray((FScriptArray*)InScriptArray), Inner(InInnerInterface), Interface(InArrayInterface), ElementCache(nullptr), ElementSize(Inner->GetSize()), ScriptArrayFlag(Flag)
     {
         // allocate cache for a single element
         ElementCache = FMemory::Malloc(ElementSize, Inner->GetAlignment());
-        UNLUA_STAT_MEMORY_ALLOC(ElementCache, ContainerElementCache);
+        UNLUA_STAT_MEMORY_ALLOC(ElementCache, ContainerElementCache);        
     }
 
     ~FLuaArray()
     {
+        Release();
+    }
+
+    void Release()
+    {
+        if(ScriptArray == nullptr)
+            return;
         if (ScriptArrayFlag == OwnedBySelf)
         {
             Clear();
@@ -71,6 +78,7 @@ public:
         }
         UNLUA_STAT_MEMORY_FREE(ElementCache, ContainerElementCache);
         FMemory::Free(ElementCache);
+        ScriptArray = nullptr;
     }
 
     FORCEINLINE FScriptArray* GetContainerPtr() const { return ScriptArray; }
@@ -382,9 +390,12 @@ public:
         return ScriptArray->GetData();
     }
 
-    FScriptArray* ScriptArray;
+    FORCEINLINE void CheckNetChange();
+
+    FScriptArray *ScriptArray;
     TSharedPtr<UnLua::ITypeInterface> Inner;
-    void* ElementCache;            // can only hold one element...
+    TLuaContainerInterface<FLuaArray> *Interface;
+    void *ElementCache;            // can only hold one element...
     int32 ElementSize;
     EScriptArrayFlag ScriptArrayFlag;
 

@@ -44,6 +44,9 @@ struct FLuaDelegatePair
 
         return Hash;
     }
+#if WITH_EDITOR
+    FString luaFunPath;
+#endif    
 };
 
 namespace UnLua
@@ -58,8 +61,6 @@ namespace UnLua
         ~FDelegateRegistry();
 
         void OnPostGarbageCollect();
-
-        FScriptDelegate* Register(FScriptDelegate* Delegate, FDelegateProperty* Property);
 
         void Register(void* Delegate, FProperty* Property, UObject* Owner);
 
@@ -84,12 +85,7 @@ namespace UnLua
         void ReleaseHandle(const UObject* Object);
         void ReleaseHandle(const UObject* Object, const void* luaFun);
         TMap<FLuaDelegatePair, TWeakObjectPtr<ULuaDelegateHandler>>& GetAllHandler(){return CachedHandlers;}
-
     private:
-        void CheckSignatureCompatible(lua_State* L, ULuaDelegateHandler* Handler, void* OtherDelegate);
-
-        bool CheckSignatureCompatible(void* ADelegate, void* BDelegate);
-
         TSharedPtr<FFunctionDesc> GetSignatureDesc(const void* Delegate);
 
         ULuaDelegateHandler* CreateHandler(int LuaRef, UObject* Owner, UObject* SelfObject);
@@ -108,7 +104,6 @@ namespace UnLua
             TWeakObjectPtr<UObject> Owner;
             TSet<TWeakObjectPtr<ULuaDelegateHandler>> Handlers;
             bool bIsMulticast;
-            bool bDeleteOnRemove;
         };
 
         TMap<void*, FDelegateInfo> Delegates;

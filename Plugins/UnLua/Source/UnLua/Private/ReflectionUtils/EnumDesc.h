@@ -31,41 +31,50 @@ public:
 
     FORCEINLINE const FString& GetName() const { return EnumName; }
 
-    FORCEINLINE int64 GetValue(const FName EntryName)
+    template <typename CharType>
+    FORCEINLINE int64 GetValue(const CharType* EntryName) const
     {
-        Load();
-
-        if (!IsValid())
-        {
-            UE_LOG(LogUnLua, Warning, TEXT("%s:Invalid enum[%s] descriptor"), ANSI_TO_TCHAR(__FUNCTION__), *EnumName);
-            return INDEX_NONE;
-        }
-
-        if (!bUserDefined)
-            return Enum->GetValueByName(EntryName);
-
-        for (auto i = 0; i < Enum->NumEnums(); ++i)
-        {
-            FName DisplayName(*Enum->GetDisplayNameTextByIndex(i).ToString());
-            if (DisplayName == EntryName)
-                return Enum->GetValueByIndex(i);
-        }
-
-        return INDEX_NONE;
+        if (bUserDefined)
+            return GetUserDefinedEnumValue(Enum, FName(EntryName));
+        return GetEnumValue(Enum, FName(EntryName));
     }
 
-    FORCEINLINE UEnum* GetEnum()
-    {
-        Load();
-        return Enum.Get();
-    }
+    FORCEINLINE UEnum* GetEnum() const { return Enum.IsValid() ? Enum.Get() : nullptr; }
 
     void Load();
 
     void UnLoad();
 
+    static int64 GetEnumValue(const TWeakObjectPtr<UEnum>& Enum, FName EntryName)
+    {
+        check(Enum.IsValid());
+        return Enum->GetValueByName(EntryName);
+    }
+
+    static int64 GetUserDefinedEnumValue(const TWeakObjectPtr<UEnum>& Enum, FName EntryName)
+    {
+        if (Enum.IsValid())
+        {
+			int32 NumEntries = Enum->NumEnums();
+			for (int32 i = 0; i < NumEntries; ++i)
+			{
+				FName DisplayName(*Enum->GetDisplayNameTextByIndex(i).ToString());
+				if (DisplayName == EntryName)
+				{
+					return Enum->GetValueByIndex(i);
+				}
+			}
+        }
+        else
+        {
+			UE_LOG(LogUnLua, Warning, TEXT("%s:Invalid enum[%s] descriptor"), ANSI_TO_TCHAR(__FUNCTION__), *EntryName.ToString());
+        }
+
+        return INDEX_NONE;
+    }
+
 private:
-    TWeakObjectPtr<UEnum> Enum;
+	TWeakObjectPtr<UEnum> Enum;
 
     FString EnumName;
     bool bUserDefined;
