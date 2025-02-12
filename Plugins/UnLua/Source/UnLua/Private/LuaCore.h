@@ -50,7 +50,6 @@ bool TryToSetMetatable(lua_State *L, const char *MetatableName, UObject* Object 
 void* NewUserdataWithTwoLvPtrTag(lua_State* L, int Size, void* Object);
 void* NewUserdataWithContainerTag(lua_State* L, int Size);
 void MarkUserdataTwoLvPtrTag(void* Userdata);
-void SetUserdataFlags(void* Userdata, uint8 Flags);
 UNLUA_API uint8 CalcUserdataPadding(int32 Alignment);
 template <typename T> uint8 CalcUserdataPadding() { return CalcUserdataPadding(alignof(T)); }
 UNLUA_API void* GetUserdata(lua_State *L, int32 Index, bool *OutTwoLvlPtr = nullptr, bool *OutClassMetatable = nullptr);
@@ -65,7 +64,6 @@ UNLUA_API void* GetCppInstanceFast(lua_State *L, int32 Index);
  */
 void* NewScriptContainer(lua_State *L, const FScriptContainerDesc &Desc);
 void* CacheScriptContainer(lua_State *L, void *Key, const FScriptContainerDesc &Desc);
-void* CacheScriptContainer(lua_State* L, void* Key, const FScriptContainerDesc& Desc, const TFunctionRef<bool (void*)>& Validator);
 void* GetScriptContainer(lua_State *L, int32 Index);
 void RemoveCachedScriptContainer(lua_State *L, void *Key);
 
@@ -109,6 +107,13 @@ UNLUA_API bool GetObjectMapping(lua_State *L, UObjectBaseUtility *Object);
 UNLUA_API void AddPackagePath(lua_State *L, const char *Path);
 
 /**
+ * Functions to register collision enums
+ */
+bool RegisterECollisionChannel(lua_State *L);
+bool RegisterEObjectTypeQuery(lua_State *L);
+bool RegisterETraceTypeQuery(lua_State *L);
+
+/**
  * Functions to create weak table
  */
 void CreateWeakKeyTable(lua_State *L);
@@ -116,6 +121,15 @@ void CreateWeakValueTable(lua_State *L);
 
 int32 TraverseTable(lua_State *L, int32 Index, void *Userdata, bool (*TraverseWorker)(lua_State*, void*));
 bool PeekTableElement(lua_State *L, void *Userdata);
+
+/**
+ * Functions to handle UEnum
+ */
+int32 Enum_Index(lua_State *L);
+int32 Enum_Delete(lua_State *L);
+int32 Enum_GetMaxValue(lua_State* L);
+int32 Enum_GetNameStringByValue(lua_State* L);
+int32 Enum_GetDisplayNameTextByValue(lua_State* L);
 
 /**
  * Functions to handle UClass
@@ -130,9 +144,13 @@ int32 Class_Cast(lua_State* L);
 /**
  * Functions to handle UScriptStruct
  */
-int32 ScriptStruct_Index(lua_State *L);
 int32 ScriptStruct_New(lua_State *L);
 int32 ScriptStruct_Delete(lua_State *L);
 int32 ScriptStruct_Copy(lua_State *L);
 int32 ScriptStruct_CopyFrom(lua_State *L);
 int32 ScriptStruct_Compare(lua_State *L);
+
+/**
+ * Create a type interface
+ */
+TSharedPtr<UnLua::ITypeInterface> CreateTypeInterface(lua_State *L, int32 Index);

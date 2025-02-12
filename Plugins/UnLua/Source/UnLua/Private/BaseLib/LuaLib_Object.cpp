@@ -12,10 +12,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 // See the License for the specific language governing permissions and limitations under the License.
 
-#include "Engine/World.h"
 #include "LowLevel.h"
 #include "UnLuaEx.h"
 #include "LuaCore.h"
+#include "LuaMessageTableOptInC.h"
+#include "ObjectReferencer.h"
+#include "UnLuaModule.h"
 
 /**
  * Load an object. for example: UObject.Load("/Game/Core/Blueprints/AI/BehaviorTree_Enemy.BehaviorTree_Enemy")
@@ -31,8 +33,7 @@ int32 UObject_Load(lua_State* L)
     if (!ObjectName)
         return luaL_error(L, "invalid class name");
 
-    FString ObjectPath = UTF8_TO_TCHAR(ObjectName);
-
+    FString ObjectPath(ObjectName);
     int32 Index = INDEX_NONE;
     ObjectPath.FindChar(TCHAR('.'), Index);
     if (Index == INDEX_NONE)
@@ -52,17 +53,19 @@ int32 UObject_Load(lua_State* L)
         UEnum* Enum = Cast<UEnum>(Object);
         if (Enum)
         {
-            const auto EnumDesc = UnLua::FLuaEnv::FindEnvChecked(L).GetEnumRegistry()->Register(Enum);
-            int32 Type = luaL_getmetatable(L, TCHAR_TO_UTF8(*EnumDesc->GetName()));
+            UnLua::FLuaEnv::FindEnvChecked(L).GetEnumRegistry()->Register(Enum);
+            int32 Type = luaL_getmetatable(L, TCHAR_TO_UTF8(*UnLua::LowLevel::GetMetatableName(Enum)));
             check(Type == LUA_TTABLE);
         }
         else
         {
             UnLua::PushUObject(L, Object);
+            UnLua::GObjectReferencer.Add(Object);
         }
     }
     else
     {
+        UE_LOG(LogUnLua, Log, TEXT("%s: Failed to load object %s!"), ANSI_TO_TCHAR(__FUNCTION__), ANSI_TO_TCHAR(ObjectName));
         lua_pushnil(L);
     }
 
@@ -83,7 +86,6 @@ static int32 UObject_IsValid(lua_State* L)
     lua_pushboolean(L, bValid);
     return 1;
 }
-
 /**
  * Get the name of an object (with no path information)
  */
@@ -95,7 +97,10 @@ static int32 UObject_GetName(lua_State* L)
 
     UObject* Object = UnLua::GetUObject(L, 1);
     if (!Object)
+    {
+        CLuaMessageTableOptInC::OnlyPrintLuaTrackback(nullptr, L);
         return luaL_error(L, "invalid object");
+    }
 
     FString Name = Object->GetName();
     lua_pushstring(L, TCHAR_TO_UTF8(*Name));
@@ -113,7 +118,10 @@ static int32 UObject_GetOuter(lua_State* L)
 
     UObject* Object = UnLua::GetUObject(L, 1);
     if (!Object)
+    {
+        CLuaMessageTableOptInC::OnlyPrintLuaTrackback(nullptr, L);
         return luaL_error(L, "invalid object");
+    }
 
     UObject* Outer = Object->GetOuter();
     UnLua::PushUObject(L, Outer);
@@ -125,13 +133,16 @@ static int32 UObject_GetOuter(lua_State* L)
  */
 static int32 UObject_GetClass(lua_State* L)
 {
-    UClass* Class;
+    UClass* Class = nullptr;
     int32 NumParams = lua_gettop(L);
     if (NumParams > 0)
     {
         UObject* Object = UnLua::GetUObject(L, 1);
         if (!Object)
+        {
+            CLuaMessageTableOptInC::OnlyPrintLuaTrackback(nullptr, L);
             return luaL_error(L, "invalid object");
+        }
 
         Class = Object->GetClass();
     }
@@ -154,10 +165,13 @@ static int32 UObject_GetWorld(lua_State* L)
 
     UObject* Object = UnLua::GetUObject(L, 1);
     if (!Object)
+    {
+        CLuaMessageTableOptInC::OnlyPrintLuaTrackback(nullptr, L);
         return luaL_error(L, "invalid object");
+    }
 
     UWorld* World = Object->GetWorld();
-    UnLua::PushUObject(L, World);
+    UnLua::PushUObject(L, (UObject*)World, false); // GWorld will be added to Root, so we don't collect it...
     return 1;
 }
 
@@ -172,23 +186,53 @@ static int32 UObject_IsA(lua_State* L)
 
     UObject* Object = UnLua::GetUObject(L, 1);
     if (!UnLua::IsUObjectValid(Object))
+    {
+        CLuaMessageTableOptInC::OnlyPrintLuaTrackback(nullptr, L);
         return luaL_error(L, "invalid object");
+    }
 
     UObject* ClassObject = UnLua::GetUObject(L, 2);
     if (!UnLua::IsUObjectValid(ClassObject))
+    {
+        CLuaMessageTableOptInC::OnlyPrintLuaTrackback(nullptr, L);
         return luaL_error(L, "invalid class");
+    }
 
     UClass* Class = Cast<UClass>(ClassObject);
     if (!Class)
+    {
+        CLuaMessageTableOptInC::OnlyPrintLuaTrackback(nullptr, L);
         return luaL_error(L, "invalid class");
+    }
 
     bool bValid = Object->IsA(Class);
     lua_pushboolean(L, bValid);
     return 1;
 }
 
-static int32 UObject_Release(lua_State* L)
+static int32 UObject_Release(lua_State *L)
 {
+    UObject *Object = UnLua::GetUObject(L, 1);
+    if (!Object)
+    {
+        UE_LOG(LogUnLua, Log, TEXT("%s: Invalid object!"), ANSI_TO_TCHAR(__FUNCTION__));
+        CLuaMessageTableOptInC::OnlyPrintLuaTrackback(nullptr, L);
+        return 0;
+    }
+    UnLua::GObjectReferencer.Remove(Object);
+    return 0;
+}
+
+static int32 UObject_AddRef(lua_State *L)
+{
+    UObject *Object = UnLua::GetUObject(L, 1);
+    if (!Object)
+    {
+        UE_LOG(LogUnLua, Log, TEXT("%s: Invalid object!"), ANSI_TO_TCHAR(__FUNCTION__));
+        CLuaMessageTableOptInC::OnlyPrintLuaTrackback(nullptr, L);
+        return 0;
+    }
+    UnLua::GObjectReferencer.Add(Object);
     return 0;
 }
 
@@ -197,30 +241,12 @@ static int32 UObject_Release(lua_State* L)
  */
 int32 UObject_Identical(lua_State* L)
 {
-    const int NumParams = lua_gettop(L);
+    int32 NumParams = lua_gettop(L);
     if (NumParams != 2)
         return luaL_error(L, "invalid parameters");
 
-    if (lua_rawequal(L, 1, 2))
-    {
-        lua_pushboolean(L, true);
-        return 1;
-    }
-
-    const auto A = UnLua::GetUObject(L, 1);
-    if (!A)
-    {
-        lua_pushboolean(L, false);
-        return 1;
-    }
-
-    const auto B = UnLua::GetUObject(L, 2);
-    if (!B)
-    {
-        lua_pushboolean(L, false);
-        return 1;
-    }
-
+    UObject* A = UnLua::GetUObject(L, 1);
+    UObject* B = UnLua::GetUObject(L, 2);
     lua_pushboolean(L, A == B);
     return 1;
 }
@@ -231,7 +257,7 @@ int32 UObject_Identical(lua_State* L)
  */
 int32 UObject_Delete(lua_State* L)
 {
-    const auto NumParams = lua_gettop(L);
+    int32 NumParams = lua_gettop(L);
     if (NumParams != 1)
         return luaL_error(L, "invalid parameters");
 
@@ -268,6 +294,7 @@ static const luaL_Reg UObjectLib[] =
     {"GetWorld", UObject_GetWorld},
     {"IsA", UObject_IsA},
     {"Release", UObject_Release},
+    {"AddRef",UObject_AddRef},
     {"Destroy", UObject_Release},
     {"__eq", UObject_Identical},
     {"__gc", UObject_Delete},

@@ -13,11 +13,6 @@ namespace UnLua
         {
             const auto ArgCount = lua_gettop(L);
             FString Message;
-            if (!lua_checkstack(L, ArgCount))
-            {
-                luaL_error(L, "too many arguments, stack overflow");
-                return Message;
-            }
             for (int ArgIndex = 1; ArgIndex <= ArgCount; ArgIndex++)
             {
                 if (ArgIndex > 1)
@@ -50,12 +45,7 @@ namespace UnLua
 
         static int HotReload(lua_State* L)
         {
-#if UNLUA_WITH_HOT_RELOAD
-            if (luaL_dostring(L, "require('UnLua.HotReload').reload()") != 0)
-            {
-                LogError(L);
-            }
-#endif
+            luaL_dostring(L, "require('UnLuaHotReload').reload()");
             return 0;
         }
 
@@ -88,7 +78,6 @@ namespace UnLua
             {"HotReload", HotReload},
             {"Ref", Ref},
             {"Unref", Unref},
-            {"FTextEnabled", nullptr},
             {NULL, NULL}
         };
 
@@ -96,46 +85,57 @@ namespace UnLua
 
         int32 GetUProperty(lua_State* L)
         {
-            auto Ptr = lua_touserdata(L, 2);
-            if (!Ptr)
-                return 0;
+            if (lua_type(L, 2) != LUA_TUSERDATA)
+            {
+                lua_pushnil(L);
+                return 1;
+            }
 
-            auto Property = static_cast<TSharedPtr<UnLua::ITypeOps>*>(Ptr);
-            if (!Property->IsValid())
-                return 0;
+            const auto Registry = UnLua::FLuaEnv::FindEnvChecked(L).GetObjectRegistry();
+            const auto Property = Registry->Get<UnLua::ITypeOps>(L, -1);
+            if (!Property.IsValid())
+            {
+                lua_pushnil(L);
+                return 1;
+            }
 
-            auto Self = GetCppInstance(L, 1);
+            void* Self = GetCppInstance(L, 1);
             if (!Self)
-                return 0;
+            {
+                lua_pushnil(L);
+                return 1;
+            }
 
-            if (UnLua::LowLevel::IsReleasedPtr(Self))
-                return luaL_error(L, TCHAR_TO_UTF8(*FString::Printf(TEXT("attempt to read property '%s' on released object"), *(*Property)->GetName())));
-
-            if (!LowLevel::CheckPropertyOwner(L, (*Property).Get(), Self))
-                return 0;
-
-            (*Property)->ReadValue_InContainer(L, Self, false);
+            if (LowLevel::IsReleasedPtr(Self))
+            {
+                UE_LOG(LogUnLua, Warning, TEXT("attempt to read property '%s' on released object"), *Property->GetName());
+                lua_pushnil(L);
+                return 1;
+            }
+            if(IsUObjectValid((UObject*)Self))
+                Property->SetUObject((UObject*)Self);
+            Property->Read(L, Self, false);
             return 1;
         }
 
         int32 SetUProperty(lua_State* L)
         {
-            auto Ptr = lua_touserdata(L, 2);
-            if (!Ptr)
-                return 0;
+            if (lua_type(L, 2) == LUA_TUSERDATA)
+            {
+                const auto Registry = FLuaEnv::FindEnvChecked(L).GetObjectRegistry();
+                const auto Property = Registry->Get<ITypeOps>(L, 2);
+                if (!Property.IsValid())
+                    return 0;
 
-            auto Property = static_cast<TSharedPtr<UnLua::ITypeOps>*>(Ptr);
-            if (!Property->IsValid())
-                return 0;
+                UObject* Object = GetUObject(L, 1, false);
+                if (LowLevel::IsReleasedPtr(Object))
+                {
+                    UE_LOG(LogUnLua, Warning, TEXT("attempt to write property '%s' on released object"), *Property->GetName());
+                    return 0;
+                }
 
-            auto Self = GetCppInstance(L, 1);
-            if (LowLevel::IsReleasedPtr(Self))
-                return luaL_error(L, TCHAR_TO_UTF8(*FString::Printf(TEXT("attempt to write property '%s' on released object"), *(*Property)->GetName())));
-
-            if (!LowLevel::CheckPropertyOwner(L, (*Property).Get(), Self))
-                return 0;
-
-            (*Property)->WriteValue_InContainer(L, Self, 3);
+                Property->Write(L, Object, 3); // set UProperty value
+            }
             return 0;
         }
 
@@ -212,6 +212,7 @@ namespace UnLua
             end
 
             _G.Class = Class
+            UE4 = _G
             _G.GetUProperty = GetUProperty
             _G.SetUProperty = SetUProperty
             )";
@@ -234,14 +235,14 @@ namespace UnLua
         {
             lua_newtable(L);
             luaL_setfuncs(L, UnLua_Functions, 0);
-            lua_pushstring(L, "Content/Script/?.lua;Plugins/UnLua/Content/Script/?.lua");
-            lua_setfield(L, -2, PACKAGE_PATH_KEY);
+            //lua_pushstring(L, "Content/Lua/?.lua;Plugins/UnLua/Content/Script/?.lua");
+            //lua_setfield(L, -2, PACKAGE_PATH_KEY);
             return 1;
         }
 
         int Open(lua_State* L)
         {
-            lua_register(L, "print", LogInfo);
+            //lua_register(L, "print", LogInfo);
             luaL_requiref(L, "UnLua", LuaOpen, 1);
             luaL_dostring(L, R"(
                 setmetatable(UnLua, {
@@ -255,22 +256,9 @@ namespace UnLua
                         end
                     end
                 })
+                pcall(function() _G.require = require('UnLuaHotReload').require end)
             )");
-
-#if UNLUA_ENABLE_FTEXT
-            luaL_dostring(L, "UnLua.FTextEnabled = true");
-#else
-            luaL_dostring(L, "UnLua.FTextEnabled = false");
-#endif
-
-#if UNLUA_WITH_HOT_RELOAD
-            luaL_dostring(L, R"(
-                pcall(function() _G.require = require('UnLua.HotReload').require end)
-            )");
-#endif
-
             LegacySupport(L);
-            lua_pop(L, 1);
             return 1;
         }
 

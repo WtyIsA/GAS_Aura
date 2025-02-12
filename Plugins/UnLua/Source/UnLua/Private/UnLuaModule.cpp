@@ -28,14 +28,13 @@
 #include "DefaultParamCollection.h"
 #include "GameDelegates.h"
 #include "LuaEnvLocator.h"
-#include "LuaOverrides.h"
 #include "UnLuaDebugBase.h"
 #include "UnLuaInterface.h"
 #include "UnLuaSettings.h"
 #include "GameFramework/PlayerController.h"
 #include "Registries/ClassRegistry.h"
 #include "Registries/EnumRegistry.h"
-
+#include "MemTracker.h"
 #define LOCTEXT_NAMESPACE "FUnLuaModule"
 
 namespace UnLua
@@ -47,10 +46,21 @@ namespace UnLua
     public:
         virtual void StartupModule() override
         {
+            GLuaSrcRelativePath = TEXT("Lua/");
+            FString strPath = FPaths::ConvertRelativePathToFull(FPaths::ProjectContentDir() + GLuaSrcRelativePath);
+            if(IFileManager::Get().DirectoryExists(*strPath))
+            {
+                GLuaSrcFullPath = strPath;
+            }
+            else
+            {      
+                GLuaSrcRelativePath = TEXT("Luac/");
+                GLuaSrcFullPath = FPaths::ConvertRelativePathToFull(FPaths::ProjectContentDir() + GLuaSrcRelativePath);        
+            }
+            UnLua::CLMemTracker::Init();
 #if WITH_EDITOR
             FModuleManager::Get().LoadModule(TEXT("UnLuaEditor"));
 #endif
-
             RegisterSettings();
 
 #if ALLOW_CONSOLE
@@ -105,8 +115,8 @@ namespace UnLua
                 EnvLocator = NewObject<ULuaEnvLocator>(GetTransientPackage(), EnvLocatorClass);
                 EnvLocator->AddToRoot();
                 FDeadLoopCheck::Timeout = Settings.DeadLoopCheck;
-                FDanglingCheck::Enabled = Settings.DanglingCheck;
 
+                /*
                 for (const auto Class : TObjectRange<UClass>())
                 {
                     for (const auto& ClassPath : Settings.PreBindClasses)
@@ -125,7 +135,7 @@ namespace UnLua
                             break;
                         }
                     }
-                }
+                }*/
             }
             else
             {
@@ -136,7 +146,14 @@ namespace UnLua
                 EnvLocator->Reset();
                 EnvLocator->RemoveFromRoot();
                 EnvLocator = nullptr;
-                FLuaOverrides::Get().RestoreAll();
+                FClassRegistry::Cleanup();
+                FEnumRegistry::Cleanup();
+
+                for (const auto Class : TObjectRange<UClass>())
+                {
+                    if (Class->ImplementsInterface(UUnLuaInterface::StaticClass()))
+                        ULuaFunction::RestoreOverrides(Class);
+                }
             }
 
             bIsActive = bActive;
@@ -174,6 +191,13 @@ namespace UnLua
         virtual void NotifyUObjectDeleted(const UObjectBase* Object, int32 Index) override
         {
             // UE_LOG(LogTemp, Log, TEXT("NotifyUObjectDeleted : %p"), Object);
+            if (!bIsActive)
+                return;
+
+            if (FClassRegistry::StaticUnregister(Object))
+                return;
+
+            FEnumRegistry::StaticUnregister(Object);
         }
 
         virtual void OnUObjectArrayShutdown() override
@@ -189,24 +213,6 @@ namespace UnLua
 
         void OnSystemError() const
         {
-            if (!bPrintLuaStackOnSystemError)
-                return;
-
-            if (!IsInGameThread())
-                return;
-
-            for (auto& Pair : FLuaEnv::GetAll())
-            {
-                if (!Pair.Key || !Pair.Value)
-                    continue;
-
-                UE_LOG(LogUnLua, Log, TEXT("%s:"), *Pair.Value->GetName())
-                PrintCallStack(Pair.Key);
-                UE_LOG(LogUnLua, Log, TEXT(""))
-            }
-
-            if (GLog)
-                GLog->Flush();
         }
 
 #if WITH_EDITOR
@@ -255,9 +261,6 @@ namespace UnLua
             GConfig->LoadGlobalIniFile(UnLuaIni, *UnLuaIni, nullptr, true);
             UUnLuaSettings::StaticClass()->GetDefaultObject()->ReloadConfig();
 #endif
-
-            auto& Settings = *GetDefault<UUnLuaSettings>();
-            bPrintLuaStackOnSystemError = Settings.bPrintLuaStackOnSystemError;
         }
 
         void UnregisterSettings()
@@ -271,8 +274,6 @@ namespace UnLua
 
         bool OnSettingsModified()
         {
-            auto& Settings = *GetDefault<UUnLuaSettings>();
-            bPrintLuaStackOnSystemError = Settings.bPrintLuaStackOnSystemError;
             return true;
         }
 
@@ -293,12 +294,11 @@ namespace UnLua
         }
 
         bool bIsActive = false;
-        bool bPrintLuaStackOnSystemError = false;
         ULuaEnvLocator* EnvLocator = nullptr;
         FDelegateHandle OnHandleSystemErrorHandle;
         FDelegateHandle OnHandleSystemEnsureHandle;
 #if ALLOW_CONSOLE
-        TUniquePtr<FUnLuaConsoleCommands> ConsoleCommands;
+        TUniquePtr<UnLua::FUnLuaConsoleCommands> ConsoleCommands;
 #endif
     };
 }

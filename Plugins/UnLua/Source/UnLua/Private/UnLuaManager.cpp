@@ -25,6 +25,7 @@
 #include "LuaCore.h"
 #include "LuaFunction.h"
 #include "ObjectReferencer.h"
+#include "Engine/NetDriver.h"
 
 
 static const TCHAR* SReadableInputEvent[] = { TEXT("Pressed"), TEXT("Released"), TEXT("Repeat"), TEXT("DoubleClick"), TEXT("Axis"), TEXT("Max") };
@@ -56,6 +57,7 @@ UUnLuaManager::UUnLuaManager()
 bool UUnLuaManager::Bind(UObject *Object, const TCHAR *InModuleName, int32 InitializerTableRef)
 {
     check(Object);
+    
 
     const auto Class = Object->IsA<UClass>() ? static_cast<UClass*>(Object) : Object->GetClass();
     lua_State *L = Env->GetMainState();
@@ -92,6 +94,11 @@ bool UUnLuaManager::Bind(UObject *Object, const TCHAR *InModuleName, int32 Initi
     // create a Lua instance for this UObject
     Env->GetObjectRegistry()->Bind(Class);
     Env->GetObjectRegistry()->Bind(Object);
+
+    if(Object->IsA<UClass>())
+    {
+        return true;
+    }
 
     // try call user first user function handler
     int32 FunctionRef = PushFunction(L, Object, "Initialize");                  // push hard coded Lua function 'Initialize'
@@ -252,23 +259,14 @@ void UUnLuaManager::OnLatentActionCompleted(int32 LinkID)
 
 bool UUnLuaManager::BindClass(UClass* Class, const FString& InModuleName, FString& Error)
 {
-    check(Class);
-
-    if (Class->HasAnyFlags(RF_NeedPostLoad | RF_NeedPostLoadSubobjects))
-        return false;
+    check(Class);    
 
     if (Classes.Contains(Class))
-    {
-#if WITH_EDITOR
-        // 兼容蓝图Recompile导致FuncMap被清空的情况
-        if (Class->FindFunctionByName("__UClassBindSucceeded", EIncludeSuperFlag::Type::ExcludeSuper))
-            return true;
-        
-        ULuaFunction::RestoreOverrides(Class);
-#else
         return true;
-#endif
-    }
+    
+    UClass* superClass = Class->GetSuperClass();
+    if (superClass)
+        Env->TryBind(superClass);
 
     const auto  L = Env->GetMainState();
     const auto Top = lua_gettop(L);
@@ -305,6 +303,11 @@ bool UUnLuaManager::BindClass(UClass* Class, const FString& InModuleName, FStrin
     UnLua::LowLevel::GetFunctionNames(Env->GetMainState(), Ref, BindInfo.LuaFunctions);
     ULuaFunction::GetOverridableFunctions(Class, BindInfo.UEFunctions);
 
+    
+    if (BindInfo.LuaFunctions.Num() == 0 || BindInfo.UEFunctions.Num() == 0)
+        return true;
+    
+    bool bNetFieldAdd = false;
     // 用LuaTable里所有的函数来替换Class上对应的UFunction
     for (const auto& LuaFuncName : BindInfo.LuaFunctions)
     {
@@ -313,11 +316,10 @@ bool UUnLuaManager::BindClass(UClass* Class, const FString& InModuleName, FStrin
         {
             UFunction* Function = *Func;
             ULuaFunction::Override(Function, Class, LuaFuncName);
+            if(Function->FunctionFlags&FUNC_Net)
+                bNetFieldAdd = true;
         }
     }
-
-    if (BindInfo.LuaFunctions.Num() == 0 || BindInfo.UEFunctions.Num() == 0)
-        return true;
 
     // 继续对特殊类型进行替换
     if (Class->IsChildOf<UAnimInstance>())
@@ -325,38 +327,40 @@ bool UUnLuaManager::BindClass(UClass* Class, const FString& InModuleName, FStrin
         for (const auto& LuaFuncName : BindInfo.LuaFunctions)
         {
             if (!BindInfo.UEFunctions.Find(LuaFuncName) && LuaFuncName.ToString().StartsWith(TEXT("AnimNotify_")))
+            {
                 ULuaFunction::Override(AnimNotifyFunc, Class, LuaFuncName);
+                if(AnimNotifyFunc->FunctionFlags&FUNC_Net)
+                    bNetFieldAdd = true;
+            }
         }
     }
-
-#if WITH_EDITOR
-    // 兼容蓝图Recompile导致FuncMap被清空的情况
-    for (const auto& Iter : BindInfo.UEFunctions)
+    if(bNetFieldAdd)
     {
-        auto& FuncName = Iter.Key;
-        auto& Function = Iter.Value;
-        if (Class->FindFunctionByName(FuncName, EIncludeSuperFlag::Type::ExcludeSuper))
+        UWorld* pWorld = nullptr;
+        for(auto& singleWorld: GEngine->GetWorldContexts())
         {
-            Class->AddFunctionToFunctionMap(Function, "__UClassBindSucceeded");
-            break;
+            if(singleWorld.World() && IsValid(singleWorld.World()->NetDriver))
+            {
+                pWorld = singleWorld.World();
+                break;
+            }
         }
+        //wty
+        // if(pWorld && IsValid(pWorld->NetDriver) && pWorld->NetDriver->NetCache.IsValid())
+        //     pWorld->NetDriver->NetCache->ReGenClassNetCache(Class);
     }
-#endif
-
+    /*
     if (auto BPGC = Cast<UBlueprintGeneratedClass>(Class))
     {
         lua_rawgeti(L, LUA_REGISTRYINDEX, Ref);
         lua_getglobal(L, "UnLua");
-        if (lua_getfield(L, -1, "Input") != LUA_TTABLE)
-        {
-            lua_pop(L, 2);
-            return true;
-        }
+        lua_getfield(L, -1, "Input");
         UnLua::FLuaTable InputTable(Env, -1);
         UnLua::FLuaTable ModuleTable(Env, -3);
         InputTable.Call("PerformBindings", ModuleTable, this, BPGC);
         lua_pop(L, 3);
     }
+    */
 
     return true;
 }

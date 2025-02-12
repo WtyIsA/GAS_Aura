@@ -22,4 +22,5 @@ class TLuaContainerInterface
 public:
     virtual TSharedPtr<UnLua::ITypeInterface> GetInnerInterface() const = 0;
     virtual TSharedPtr<UnLua::ITypeInterface> GetExtraInterface() const = 0;
+    virtual UnLua::ITypeInterface* GetExtraInterfaceEx() {return nullptr;}
 };

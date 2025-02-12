@@ -15,31 +15,32 @@
 #pragma once
 
 #include "lua.hpp"
-#include "UnLuaBase.h"
 
 namespace UnLua
 {
     namespace LowLevel
     {
-        FORCEINLINE int AbsIndex(lua_State* L, int Index)
-        {
+
+    	FORCEINLINE int AbsIndex(lua_State* L, int Index)
+    	{
 #if LUA_VERSION_NUM >= 502
-            return lua_absindex(L, Index);
+    		return lua_absindex(L, Index);
 #else
-            if (idx < 0 && idx > LUA_REGISTRYINDEX)
-                idx += lua_gettop(L) + 1;
-            return idx;
+    		if (idx < 0 && idx > LUA_REGISTRYINDEX)
+    			idx += lua_gettop(L) + 1;
+    		return idx;
 #endif
-        }
+    	}
 
-        int EmptyIterator(lua_State* L);
+    	int EmptyIterator(lua_State* L);
 
-        FORCEINLINE int PushEmptyIterator(lua_State* L)
-        {
-            lua_pushcfunction(L, EmptyIterator);
-            return 1;
-        }
+    	FORCEINLINE int PushEmptyIterator(lua_State* L)
+    	{
+    		lua_pushcfunction(L, EmptyIterator);
+    		return 1;
+    	}
 
+    	
         const static UObject* ReleasedPtr = (UObject*)0xDEAD;
 
         FORCEINLINE bool IsReleasedPtr(const void* Ptr) { return Ptr == ReleasedPtr; }
@@ -62,12 +63,6 @@ namespace UnLua
         void GetFunctionNames(lua_State* L, int TableRef, TSet<FName>& FunctionNames);
 
         /* Get package.loaded[ModuleName] */
-        int GetLoadedModule(lua_State* L, const char* ModuleName);
-
-        bool CheckPropertyOwner(lua_State* L, UnLua::ITypeOps* InProperty, void* InContainerPtr);
-
-        void* GetUserdata(lua_State* L, int32 Index, bool* OutTwoLvlPtr = nullptr, bool *OutClassMetatable = nullptr);
-
-        uint8 CalculateUserdataPadding(UStruct* Struct);
+        int GetLoadedModule(lua_State* L, const char *ModuleName);
     }
 }

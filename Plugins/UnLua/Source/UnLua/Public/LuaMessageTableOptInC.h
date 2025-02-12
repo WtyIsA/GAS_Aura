@@ -1,5 +1,5 @@
 #pragma once
-#include "lobject.h"
+#include "lua.hpp"
 
 
 class UNLUA_API CLuaMessageTableOptInC

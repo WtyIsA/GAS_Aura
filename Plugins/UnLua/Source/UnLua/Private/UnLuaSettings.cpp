@@ -19,7 +19,7 @@
 UUnLuaSettings::UUnLuaSettings(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
 {
-    PreBindClasses.Add(UBlueprintFunctionLibrary::StaticClass());
-    PreBindClasses.Add(UAnimNotifyState::StaticClass());
-    PreBindClasses.Add(UAnimNotify::StaticClass());
+    //PreBindClasses.Add(UBlueprintFunctionLibrary::StaticClass());
+    //PreBindClasses.Add(UAnimNotifyState::StaticClass());
+    //PreBindClasses.Add(UAnimNotify::StaticClass());
 }

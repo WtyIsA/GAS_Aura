@@ -14,6 +14,7 @@
 
 #include "UnLuaEx.h"
 #include "LuaCore.h"
+#include "UnLuaModule.h"
 #include "ReflectionUtils/ClassDesc.h"
 
 #if UNLUA_LEGACY_BLUEPRINT_PATH
@@ -66,10 +67,11 @@ int32 UClass_Load(lua_State* L)
     if (!Class)
         return 0;
 
-    if (!UnLua::FLuaEnv::FindEnv(L)->GetClassRegistry()->Register(Class))
+    if (!UnLua::FClassRegistry::Find(L)->Register(Class))
         return 0;
 
     UnLua::PushUObject(L, Class);
+    UnLua::GObjectReferencer.Add(Class);
     return 1;
 }
 
@@ -123,17 +125,35 @@ static int32 UClass_GetDefaultObject(lua_State* L)
     return 1;
 }
 
+static int32 UClass_Release(lua_State* L)
+    {
+        int32 NumParams = lua_gettop(L);
+        if (NumParams != 1)
+        {
+            UE_LOG(LogUnLua, Log, TEXT("%s: Invalid parameters!"), ANSI_TO_TCHAR(__FUNCTION__));
+            return 0;
+        }
+
+        UClass* SrcClass = Cast<UClass>(UnLua::GetUObject(L, 1));
+        if (!SrcClass)
+        {
+            UE_LOG(LogUnLua, Log, TEXT("%s: Invalid source class!"), ANSI_TO_TCHAR(__FUNCTION__));
+            return 0;
+        }
+        UnLua::GObjectReferencer.Remove(SrcClass);
+        return 0;
+    }
 
 static const luaL_Reg UClassLib[] =
 {
-    {"Load", UClass_Load},
-    {"IsChildOf", UClass_IsChildOf},
-    {"GetDefaultObject", UClass_GetDefaultObject},
-    {nullptr, nullptr}
+    {"Load", UClass_Load },
+    {"IsChildOf", UClass_IsChildOf },
+    {"GetDefaultObject", UClass_GetDefaultObject },
+    {"Release", UClass_Release },
+    {nullptr, nullptr }
 };
 
 BEGIN_EXPORT_REFLECTED_CLASS(UClass)
-    ADD_LIB(UClassLib)
+ADD_LIB(UClassLib)
 END_EXPORT_CLASS()
-
 IMPLEMENT_EXPORTED_CLASS(UClass)

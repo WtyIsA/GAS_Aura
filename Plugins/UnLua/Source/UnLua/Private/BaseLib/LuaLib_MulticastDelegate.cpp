@@ -14,6 +14,7 @@
 
 #include "UnLuaEx.h"
 #include "LuaCore.h"
+#include "LuaMessageTableOptInC.h"
 
 /**
  * Helper function to get delegate, target UObject and Lua function
@@ -35,7 +36,10 @@ static const char* GetMulticastDelegateInfo(lua_State* L, T* & Delegate, UObject
 
     CallbackFunction = lua_topointer(L, 3);
     if (!CallbackFunction)
+    {
+        CLuaMessageTableOptInC::OnlyPrintLuaTrackback("", L);
         return "invalid function";
+    }
 
     return nullptr;
 }

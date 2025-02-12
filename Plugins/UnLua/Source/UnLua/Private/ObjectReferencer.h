@@ -22,6 +22,11 @@ namespace UnLua
     class FObjectReferencer : public FGCObject
     {
     public:
+        static FObjectReferencer& Instance()
+        {
+            static FObjectReferencer Referencer;
+            return Referencer;
+        }
         void Add(UObject* Object)
         {
             if (Object == nullptr)
@@ -61,4 +66,7 @@ namespace UnLua
         TSet<UObject*> ReferencedObjects;
         FString Name = TEXT("FObjectReferencer");
     };
+
+    
+#define GObjectReferencer FObjectReferencer::Instance()
 }

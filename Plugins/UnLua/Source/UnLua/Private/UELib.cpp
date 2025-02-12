@@ -12,12 +12,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 // See the License for the specific language governing permissions and limitations under the License.
 
+#include "lua.hpp"
 #include "UELib.h"
+
 #include "Binding.h"
+#include "LowLevel.h"
 #include "Registries/ClassRegistry.h"
 #include "LuaCore.h"
 #include "LuaDynamicBinding.h"
 #include "LuaEnv.h"
+#include "UnLuaModule.h"
 #include "Registries/EnumRegistry.h"
 
 static const char* REGISTRY_KEY = "UnLua_UELib";
@@ -52,10 +56,28 @@ static int UE_Index(lua_State* L)
                 Env.GetClassRegistry()->Register(Struct);
         }
         else
-        {
-            UE_LOG(LogUnLua, Warning, TEXT("attempt to load a blueprint type %s with UE namespace, use UE.UClass.Load or UE.UObject.Load instead."), UTF8_TO_TCHAR(Name));
-            return 0;
+        {                      
+            if (auto Struct = Cast<UStruct>(ReflectedType))
+            {
+                const auto MetatableName = UnLua::LowLevel::GetMetatableName(Struct);
+                if(!MetatableName.Equals( UTF8_TO_TCHAR(Name),ESearchCase::CaseSensitive))
+                {
+                    UE_LOG(LogTemp,Display,TEXT("UE_Index %s != %s ?"),*MetatableName, UTF8_TO_TCHAR(Name));
+                }
+                if (!Env.GetClassRegistry()->Register(Name))
+                {
+                    UE_LOG(LogUnLua, Warning, TEXT("attempt to load a blueprint type %s with UE namespace, use UE.UClass.Load or UE.UObject.Load instead. Register failed"), UTF8_TO_TCHAR(Name));                        
+                    return 0;
+                }
+            }
+            else
+            {
+                UE_LOG(LogUnLua, Warning, TEXT("attempt to load a blueprint type %s with UE namespace, use UE.UClass.Load or UE.UObject.Load instead."), UTF8_TO_TCHAR(Name));                        
+                return 0;
+            }
+        
         }
+        
     }
     else if (Prefix == 'E')
     {
@@ -70,8 +92,11 @@ static int UE_Index(lua_State* L)
         }
         else
         {
-            UE_LOG(LogUnLua, Warning, TEXT("attempt to load a blueprint enum %s with UE namespace, use UE.UObject.Load instead."), UTF8_TO_TCHAR(Name));
-            return 0;
+            if (!Env.GetEnumRegistry()->Register(Name))
+            {
+                UE_LOG(LogUnLua, Warning, TEXT("attempt to load a blueprint enum %s with UE namespace, use UE.UObject.Load instead."), UTF8_TO_TCHAR(Name));
+                return 0;
+            }            
         }
     }
 
@@ -97,9 +122,12 @@ static int32 Global_NewObject(lua_State *L)
         return 0;
     }
 
-    UObject* Outer = UnLua::GetUObject(L, 2);
+    UObject *Outer = NumParams > 1 ? UnLua::GetUObject(L, 2) : (UObject*)GetTransientPackage();
     if (!Outer)
-        Outer = GetTransientPackage();
+    {
+        UNLUA_LOGERROR(L, LogUnLua, Log, TEXT("%s: Invalid outer!"), ANSI_TO_TCHAR(__FUNCTION__));
+        return 0;
+    }
 
     FName Name = NumParams > 2 ? FName(lua_tostring(L, 3)) : NAME_None;
     //EObjectFlags Flags = NumParams > 3 ? EObjectFlags(lua_tointeger(L, 4)) : RF_NoFlags;
@@ -124,6 +152,8 @@ static int32 Global_NewObject(lua_State *L)
         if (Object)
         {
             UnLua::PushUObject(L, Object);
+            const auto Env = IUnLuaModule::Get().GetEnv();
+            Env->GetObjectReferencer().Add(Object);
         }
         else
         {
