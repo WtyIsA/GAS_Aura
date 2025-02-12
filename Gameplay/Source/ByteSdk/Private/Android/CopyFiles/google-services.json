@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "283800579458",
+    "project_id": "evo-7a653",
+    "storage_bucket": "evo-7a653.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283800579458:android:8a23c62d361054eb06f39b",
+        "android_client_info": {
+          "package_name": "com.ylhy.evoos.and"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "283800579458-rubk0kbggbb8dhl534bmdkagmmss4mk5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ylhy.evoos.and",
+            "certificate_hash": "6b3c2a6e8cadf376b9f39d6b95db6a55d8c8a4ae"
+          }
+        },
+        {
+          "client_id": "283800579458-2av5iphu0vp21e2cvk85gs6ip0ndu205.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF6j7PYMguGqck1lAeyp6gX8Mez8skomQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "283800579458-2av5iphu0vp21e2cvk85gs6ip0ndu205.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "283800579458-r42p933g7qvh8fhe9r799kch7ofu47fv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ylhy.evoos.and",
+                "app_store_id": "1581560065"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

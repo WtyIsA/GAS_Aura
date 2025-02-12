@@ -1,0 +1,61 @@
+{
+  "app": {
+    "app_id": "7634",
+    "is_debug": true,
+    "channel": "GooglePlay",
+    "app_name": "evo",
+    "screen_orientation": "sensorLandscape",
+    "main_activity": "com.epicgames.unreal.GameActivity",
+    "af_dev_key": "CwUshB5HFUr5UBbAZPCkkZ",
+    "server_region": 20,
+    "push": {
+      "enable": true,
+      "push_channel_id": "evo",
+      "push_channel_name": "evo",
+      "push_app_name": "evo",
+      "red_badge_show": false,
+      "red_max_show_times": 0,
+      "red_show_strategy": "default_strategy"
+    },
+    "rtc": {
+      "rtcAppId": "623ae7aa7b36a700be0b4147"
+    },
+    "gsdk_init_timeout": 30000,
+    "feedback_url": "https://cs.vasnssdk.com/email",
+    "share": {
+      "panelId": "7634_game_2",
+      "dimAmount" : "0.3",
+      "share_keys":{
+        "messenger": "211842450799275",
+        "twitter": {
+          "key": "bbA9xPcrhhVarmszuXcpcdv3R",
+          "secret": "ySXP4zso4aSYDGR6iie8Tn04Ad4UsNFatHJkrNjon7MtxWRpe6"
+        }
+      }
+    }
+  },
+    "channel":{
+         "account":{
+            "facebook_friend_permission":true,
+            "google_id":"283800579458-2av5iphu0vp21e2cvk85gs6ip0ndu205.apps.googleusercontent.com",
+            "google_web_id":"283800579458-rubk0kbggbb8dhl534bmdkagmmss4mk5.apps.googleusercontent.com",
+            "line_channel_id":"",
+            "google_platForm_id":"1420",
+            "facebook_platform_id":"1418",
+            "line_platform_id":"",
+            "kakao_platfrom_id":"",
+            "vk_platfrom_id":"1419",
+            "twitter_platform_id":"",
+            "twitter_key":"",
+            "twitter_secret":"",
+            "sort":[
+                "facebook",
+                "google",
+                "vk"
+            ]
+        },
+        "pay": {
+          "iap_key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjaJAJ03tOaLOGu1XNucVgO4aasdozMMLAd170wAPz0wudh+oxbDe05Doqv4YvQNX4B9j1b/LGIcSom6R8uZj5Rb8abLCTqgiVM9jgLxnfh2/f5s8kQlY6p7QVbn3e6oiPw+lPv9E4zD4TI+Wbw2X0gxtH6OGp0kj3+F0Ult3Fz9bKv+gqRu0/zVm6eTHj8MWkAg/ej6eJVGyWmGTgj/xZUO5WhrgDwF4rrzwO2yJZkFNxWWiThyXlwrBtYyb/CfQDbtdYF/kFyeyVB/p03hxT/miV59HO5XjOZTO0viFdO3voTD0mFtg/T+wcWh3D2R0xxKcVhSFVjsRcJ1I0SNT0wIDAQAB"
+        }
+    }
+}

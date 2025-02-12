@@ -1,0 +1,45 @@
+{
+  "app": {
+    "app_id": "7881",
+    "is_debug": false,
+    "channel": "bsdk",
+    "app_name": "evocn",
+    "screen_orientation": "sensorLandscape",
+    "main_activity": "com.epicgames.unreal.GameActivity",
+    "is_need_anti_addiction": true,
+    "is_need_privacy_protection": true,
+    "is_need_visitor":false,
+    "gsdk_init_timeout": 30000,
+    "push": {
+      "enable": true,
+      "push_channel_id": "第一法则",
+      "push_channel_name": "第一法则",
+      "push_app_name": "evocn",
+      "red_badge_show": false,
+      "red_max_show_times": 0,
+      "red_show_strategy": "default_strategy"
+    },
+    "rtc": {
+      "rtcAppId": "61d5370c78e9cb00c40d4801"
+    },
+    "feedback_url": "https://cs-sandbox.dailygn.com"
+  },
+  "channel": {
+      "aweme_platform_id": "1895",
+      "toutiao_platform_id": "1894",
+      "aweme_platform_key": "awyghhn9orpsmmn9",
+      "toutiao_platform_key": "ttpr4wqrz9bnlies",
+      "toutiao_friend_permission": true,
+      "cm_app_id": "300012067505",
+      "cm_app_key": "0C0F04519816207A870608E2068EFC59",
+      "cu_app_id": "99166000000000081781",
+      "cu_app_key": "2110bc42e6fce87f81740b7b9b7f3f43",
+      "ct_app_id": "8135837574",
+      "ct_app_key": "xFvxOF2kTOrpKgH7HKvl2VfgFtAmp1Is",
+      "huoshan_platform_id": "1400",
+      "huoshan_platform_key": "hsdba1cg7vxuyhyk",
+      "xigua_platform_id": "1517",
+      "xigua_platform_key": "xgiazh1nyqvb7meb",
+      "login_panel_can_be_closed": false
+  }
+}

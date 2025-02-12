@@ -1,0 +1,1 @@
+﻿#include "DefaultVoiceInterface.h"

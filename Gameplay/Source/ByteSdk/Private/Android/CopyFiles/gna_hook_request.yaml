@@ -1,0 +1,19 @@
+import_hook:
+  -
+    library:
+      source: libUnreal.so
+      target: libssgamesdkcronet.so
+
+    functions:
+      connect: HookConnect
+      send: HookSend
+      sendto: HookSendto
+      recv: HookRecv
+      recvfrom: HookRecvfrom
+      read: HookRead
+      close: HookClose
+      poll: HookPoll
+      setsockopt: HookSetsockopt
+      fcntl: HookFcntl
+      select: HookSelect
+      ioctl: HookIoctl

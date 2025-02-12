@@ -1,0 +1,1779 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+    <init>
+        <log text="ByteSdk_APL INIT"/>
+		<setBoolIsEqual result="bIsGuonei" arg1="$S(isguonei)" arg2="yes this is guonei"/>
+		<if condition="bIsGuonei" >
+			<true>
+				<log text="----------guonei yes--------"/>
+			</true>
+			<false>
+				<log text="----------guonei false--------"/>
+			</false>
+		</if>
+    </init>
+
+	
+    <buildscriptGradleAdditions>
+        <insert>
+repositories {
+    maven {
+        url 'https://artifact.bytedance.com/repository/ttgamesdk'
+    }
+}
+dependencies {
+    classpath 'com.bytedance.ttgame:gsdk_plugin:316.0'
+}
+    </insert>
+    </buildscriptGradleAdditions>
+
+    <buildGradleAdditions>
+        <insert>
+dependencies {
+	implementation('com.google.code.gson:gson:2.8.9')
+}
+apply plugin: 'g.gsdk' // 跟在com.android.application或者com.android.library引入语句的后面
+
+gsdk {
+        //请手动替换为游戏真实的app_id，并解开注释
+        appId = '7881'
+        it.version = '3.16.1.0'
+		region = 'cn'
+		optionalModules='rating,core,crash,upgrade,geas'
+		messi {
+			enabled = true
+		}
+		componentSpec {
+			account {
+				it.version='3.16.1.0'
+				it.abilities='AccountCommon,AccountPhoneOnekeyLogin,AccountTapTap'
+			}
+			compliance {
+				it.version='3.16.1.0'
+				it.abilities='ComplianceAntiAddiction,CompliancePermission,CompliancePrivacy,ComplianceProtocol,ComplianceRealName'
+			}
+			friendchain {
+				it.version='3.16.1.0'
+				it.abilities='FriendChain'
+			}
+			gna {
+				it.version='3.16.0.0'
+				it.abilities='GNA'
+			}
+			gpm {
+				it.version='3.16.0.0'
+				it.abilities='GPM'
+			}
+			gameprotect {
+				it.version='3.16.1.0'
+				it.abilities='GameProtect'
+			}
+			rating {
+				it.abilities='AppScore'
+			}
+			core {
+				it.abilities='Core'
+			}
+			crash {
+				it.abilities='Crash'
+			}
+			upgrade {
+				it.abilities='ForceUpdate'
+			}
+			geas {
+				it.abilities='GEAS'
+			}
+			pay {
+				it.version='3.16.1.1'
+				it.abilities='Pay'
+			}
+			push {
+				it.version='3.16.0.0'
+				it.abilities='Push'
+			}
+			rtc {
+				it.version='3.37.403.002032'
+				it.abilities='RTC'
+			}
+			webview {
+				it.version='3.16.1.0'
+				it.abilities='Webview'
+			}
+		}
+    }
+android {
+       defaultConfig {
+            manifestPlaceholders = [
+                appAuthRedirectScheme: applicationId
+            ]
+       }
+}
+    </insert>
+    </buildGradleAdditions>
+    
+    <resourceCopies>
+        <copyFile src="$S(PluginDir)/Private/Android/CopyFiles/config_cn.json" dst="$S(BuildDir)/assets/config.json" force="true"/>
+        <copyDir src="$S(PluginDir)/Private/Android/CopyFiles/src/com/epicgames/unreal" dst="$S(BuildDir)/src/com/epicgames/unreal" />
+        <copyDir src="$S(PluginDir)/Private/Android/CopyFiles/notchtools" dst="$S(BuildDir)/src/notchtools"/>
+		<copyDir src="$S(PluginDir)/Private/Android/CopyFiles/$S(Architecture)" dst="$S(BuildDir)/libs/$S(Architecture)"/>
+		<copyDir src="$S(PluginDir)/Private/Android/CopyFiles/res_cn" dst="$S(BuildDir)/res"/>
+    </resourceCopies>
+
+    <gameApplicationSuperClass>
+        <insert>RocketApplication</insert>
+    </gameApplicationSuperClass>
+    <gameApplicationImportAdditions>
+        <insert>
+import com.bytedance.ttgame.rocketapi.RocketApplication;
+import com.bytedance.ttgame.rocketapi.RocketCn;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import com.bytedance.ttgame.module.push.api.IPushCallback;
+import com.bytedance.ttgame.module.push.api.IPushService;
+import com.bytedance.ttgame.module.push.api.PushInfo;
+import android.content.Intent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import android.app.Activity;
+import java.util.Date;
+        </insert>
+    </gameApplicationImportAdditions>
+    <gameApplicationClassAdditions>
+	<insert>
+public static String mHotPatcherSoPath = "jniLibs";
+	public static final String mUnrealSoHotPatcherName = "libUnreal_update.so";
+	private void CheckSoUpdate(){
+		String strDownloadResPath;
+		File external = getExternalFilesDir(null);
+		if (external != null &amp;&amp;  external.exists()) {
+			strDownloadResPath = external.getAbsolutePath() + "/Res/";
+		} else {
+			strDownloadResPath = getFilesDir().getAbsolutePath() + "/Res/";
+		}
+
+		String apkPath = getPackageCodePath();
+		Log.verbose("[HotPatcher]apkpath getPackageCodePath:" + apkPath);
+		File apkFile = new File(apkPath);
+		File soUpdateDir = this.getDir("jniLibs", Activity.MODE_PRIVATE);
+		mHotPatcherSoPath = soUpdateDir.getAbsolutePath()+ File.separator;
+		if(HotPatcher.FileisExist(strDownloadResPath + mUnrealSoHotPatcherName)){
+			HotPatcher.CopyFile(strDownloadResPath + mUnrealSoHotPatcherName, mHotPatcherSoPath + mUnrealSoHotPatcherName);
+			HotPatcher.DeleteFile(strDownloadResPath + mUnrealSoHotPatcherName);
+		}
+		File hotSoFilePath = new File(mHotPatcherSoPath + "libUnreal.so");
+		File reNameSoFile = new File(mHotPatcherSoPath + mUnrealSoHotPatcherName);
+		if(reNameSoFile.exists()){
+			if (hotSoFilePath.exists()){
+				Log.verbose("[HotPatcher] delete old libUnreal.so");
+				hotSoFilePath.delete();
+			}
+			if (apkFile.lastModified() > reNameSoFile.lastModified()) {
+				Log.verbose("[HotPatcher]apk is new version,delete update copy.so and Res apk=" + new Date(apkFile.lastModified()).toString()+",so=" + new Date(reNameSoFile.lastModified()).toString());
+				reNameSoFile.delete();
+				HotPatcher.DeleteFile(strDownloadResPath);
+				return;
+			}
+			if (!HotPatcher.FileisExist(strDownloadResPath)) {
+				Log.verbose("[HotPatcher]streamassets/Res not exist,delete update copy.so");
+				reNameSoFile.delete();
+				return;
+			}
+			reNameSoFile.renameTo(hotSoFilePath);
+		}
+		else{
+			if (hotSoFilePath.exists()) {
+				if (!HotPatcher.FileisExist(strDownloadResPath)) {
+					Log.verbose("[HotPatcher]streamassets/Res not exist,delete update so");
+					hotSoFilePath.delete();
+					return;
+				}
+				if (apkFile.lastModified() > hotSoFilePath.lastModified()) {
+					Log.verbose("[HotPatcher]apk is new version,delete update so and Res apk=" + new Date(apkFile.lastModified()).toString()+",so=" + new Date(hotSoFilePath.lastModified()).toString());
+					hotSoFilePath.delete();
+					HotPatcher.DeleteFile(strDownloadResPath);
+					return;
+				}
+			}
+		}
+
+		if (hotSoFilePath.exists()) {
+			try {
+				HotPatcher.installNativeLibraryPath(this.getApplicationContext().getClassLoader(), soUpdateDir);
+				Log.verbose("[HotPatcher]installNativeLibraryPath");
+			} catch (Throwable e) {
+				Log.error("[HotPatcher]installNativeLibraryPath error " + e.toString());
+			}
+		}
+	}
+	</insert>
+    </gameApplicationClassAdditions>
+	
+	 <gameApplicationOnCreateAdditions>
+		<insert>    
+		ApplicationInfo applicationInfo = null;
+        try {
+            applicationInfo = getPackageManager().getApplicationInfo(getPackageName(),
+                    PackageManager.GET_META_DATA);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        if(applicationInfo == null){
+            throw new IllegalArgumentException(" get application info = null ");
+        }
+		if(!applicationInfo.metaData.containsKey("android.max_aspec")) {
+			float maxAspect = 2.1f;
+			if (applicationInfo.metaData.containsKey("com.epicgames.unreal.max_aspect"))
+				maxAspect = applicationInfo.metaData.getFloat("com.epicgames.unreal.max_aspect");
+			Log.verbose("android.max_aspect will set " + maxAspect);
+			applicationInfo.metaData.putFloat("android.max_aspect", maxAspect);
+		}
+		Context appContext = this;
+		RocketCn.getInstance().getComponent(IPushService.class).addPushCallback(new IPushCallback() {
+			@Override
+			public void onReceivedPush(PushInfo pushInfo) {
+				Log.verbose("msgpush onReceivedPush url=" + pushInfo.getOpenUrl() + ",ext="+pushInfo.getExt());
+				if(GameActivity.Get() == null){
+					Intent intent = new Intent(appContext, SplashActivity.class);
+					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					appContext.startActivity(intent);
+					Log.verbose("msgpush GameApplication oncreate gameactivity is null, run splash");
+					return;
+				}				
+				
+				Intent intent = new Intent(appContext, GameActivity.class);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				appContext.startActivity(intent);
+				Log.verbose("msgpush GameApplication oncreate gameactivity is runing");
+				
+				String openUrl = pushInfo.getOpenUrl();
+				if(openUrl != null) {
+					openUrl = openUrl.toLowerCase();
+					if (openUrl.startsWith("http")) {
+						GameActivity.OpenUrlBySDk("", pushInfo.getOpenUrl(), "");
+					}
+				}
+			}
+		});
+		CheckSoUpdate();
+	</insert>
+    </gameApplicationOnCreateAdditions>
+
+    <androidManifestUpdates>
+		<setElement result="IntransitActivity" value="activity" />
+		<addAttribute tag="$IntransitActivity" name="android:name" value="com.bytedance.ttgame.module.push.IntransitActivity" />
+		<addAttribute tag="$IntransitActivity" name="android:launchMode" value="singleTask" />
+		<addAttribute tag="$IntransitActivity" name="android:exported" value="true" />
+
+		<setElement result="IntentFilterElement" value="intent-filter"/>
+		<addElements tag="$IntentFilterElement">
+			<action android:name="com.ss.android.sdk.snssdkgpush283800579458"/>
+			<category android:name="android.intent.category.DEFAULT"/>
+		</addElements>
+		<addElement tag="$IntransitActivity" name="IntentFilterElement"/>
+		<setElement result="IntentFilterElement" value="intent-filter"/>
+		<addElements tag="$IntentFilterElement">
+			<action android:name="android.intent.action.VIEW"/>
+			<category android:name="android.intent.category.DEFAULT"/>
+			<category android:name="android.intent.category.BROWSABLE"/>
+			<data android:scheme="snssdkgpush283800579458" />
+		</addElements>
+		<addElement tag="$IntransitActivity" name="IntentFilterElement"/>
+
+		<addElement tag="application" name="IntransitActivity" />
+
+
+		<addPermission android:name="android.permission.SYSTEM_ALERT_WINDOW" tools:node="remove"/>
+		<addPermission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+		<addPermission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
+		<addPermission android:name="android.permission.READ_APP_BADGE" />
+		<addPermission android:name="android.permission.UPDATE_APP_BADGE" />
+		<addPermission android:name="com.sec.android.provider.badge.permission.READ" />
+		<addPermission android:name="com.sec.android.provider.badge.permission.WRITE" />
+		<addPermission android:name="com.htc.launcher.permission.READ_SETTINGS" />
+		<addPermission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" />
+		<addPermission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
+		<addPermission android:name="com.sonymobile.home.permission.PROVIDER_INSERT_BADGE" />
+		<addPermission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" />
+		<addPermission android:name="com.majeur.launcher.permission.UPDATE_BADGE" />
+		<addPermission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
+		<addPermission android:name="com.huawei.android.launcher.permission.READ_SETTINGS" />
+		<addPermission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS" />
+		<addPermission android:name="com.oppo.launcher.permission.READ_SETTINGS" />
+		<addPermission android:name="com.oppo.launcher.permission.WRITE_SETTINGS" />
+		<addPermission android:name="me.everything.badger.permission.BADGE_COUNT_READ" />
+		<addPermission android:name="me.everything.badger.permission.BADGE_COUNT_WRITE" />
+		<addPermission android:name="com.vivo.notification.permission.BADGE_ICON" />
+		<addPermission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+		<addPermission android:name="android.permission.VIBRATE" />
+		<addPermission android:name="android.permission.RECORD_AUDIO" />
+		<addPermission android:name="android.permission.WAKE_LOCK" />
+		<addPermission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+        
+    </androidManifestUpdates>
+    
+    <androidStringsUpdates>
+        <setElement result="default_user_pro" value="string" text="https://sf1-cdn-tos.douyinstatic.com/obj/ies-hotsoon-draft/ttgame/cccaac7d-1274-41c2-8067-4c4730288a6d.html"/>
+			<addAttribute tag="$default_user_pro" name="name" value="gsdk_account_default_user_pro" />
+        <addElement tag="resources" name="default_user_pro" />
+        <setElement result="private_proprivate_pro" value="string" text="https://sf1-cdn-tos.douyinstatic.com/obj/ies-hotsoon-draft/ttgame/d024fca1-cb78-424a-b640-de430629be97.html"/>
+			<addAttribute tag="$private_proprivate_pro" name="name" value="gsdk_account_default_private_pro" />
+        <addElement tag="resources" name="private_proprivate_pro" />
+    </androidStringsUpdates>
+
+    <gameActivityImportAdditions>
+        <insert>
+
+import com.bytedance.ttgame.base.GSDKError;
+import com.bytedance.ttgame.module.crash.api.ICrashService;
+import com.bytedance.ttgame.module.fileupload.api.IFileUploadService;
+import com.bytedance.ttgame.module.push.api.IPushCallback;
+import com.bytedance.ttgame.module.push.api.IPushService;
+import com.bytedance.ttgame.module.push.api.PushInfo;
+import com.bytedance.ttgame.module.push.api.ILocalPushCallback;
+import com.bytedance.ttgame.rocketapi.IRocketCnApi;
+import com.bytedance.ttgame.rocketapi.RocketCn;
+import com.bytedance.ttgame.rocketapi.account.IAccountCallback;
+import com.bytedance.ttgame.rocketapi.account.IAccountService;
+import com.bytedance.ttgame.rocketapi.account.LoginType;
+import com.bytedance.ttgame.rocketapi.account.UserInfoResult;
+import com.bytedance.ttgame.rocketapi.callback.InitCallback;
+import com.bytedance.ttgame.rocketapi.callback.InitResult;
+import com.bytedance.ttgame.rocketapi.callback.StateChangedCallback;
+import com.bytedance.ttgame.sdk.module.account.pojo.ProtocolAddressData;
+import com.bytedance.ttgame.rocketapi.callback.IEmulatorCallback;
+import com.bytedance.ttgame.module.webview.api.IWebViewErrorCodeCallback;
+import com.bytedance.ttgame.module.webview.api.IWebViewService;
+import com.bytedance.ttgame.framework.module.callback.ICallback;
+import com.bytedance.ttgame.rocketapi.account.LatestUserInfo;
+import com.bytedance.ttgame.module.compliance.api.antiaddiction.AntiAddictionStatus;
+import com.bytedance.ttgame.module.compliance.api.antiaddiction.IAntiAddictionService;
+import com.bytedance.ttgame.module.compliance.api.antiaddiction.IAntiAddictionStatusListener;
+import com.bytedance.ttgame.module.compliance.api.realname.pojo.IRealVerifyListener;
+import com.bytedance.ttgame.module.compliance.api.realname.pojo.RealVerifyInfo;
+import com.bytedance.ttgame.module.gameprotect.api.ISecureService;
+import com.bytedance.ttgame.rocketapi.pay.IPayCallback;
+import com.bytedance.ttgame.rocketapi.pay.RocketPayInfo;
+import com.bytedance.ttgame.rocketapi.pay.RocketPayResult;
+import com.bytedance.ttgame.rocketapi.pay.QueryGoodsParams;
+import com.bytedance.ttgame.rocketapi.pay.RocketGoods;
+import com.bytedance.ttgame.module.webview.api.IExitWebViewCallback;
+import com.bytedance.ttgame.module.cdkey.api.CDKeyInfo;
+import com.bytedance.ttgame.module.cdkey.api.CDkeyExchangeResult;
+import com.bytedance.ttgame.module.cdkey.api.ICDKeyService;
+import com.bytedance.ttgame.module.gna.api.INetDiagnosisCallback;
+import com.bytedance.ttgame.module.gna.api.INetDiagnosisRequest;
+import com.bytedance.ttgame.module.gna.api.INetExperienceService;
+import com.bytedance.ttgame.module.gna.api.NetDetectType;
+import com.bytedance.ttgame.module.gna.api.NetExperienceRequestType;
+import androidx.annotation.Nullable;
+import notchtools.geek.com.notchtools.NotchTools;
+import notchtools.geek.com.notchtools.core.NotchProperty;
+import notchtools.geek.com.notchtools.core.OnNotchCallBack;
+import notchtools.geek.com.notchtools.helper.NotchStatusBarUtils;
+import com.google.gson.Gson;
+import com.ss.bytertc.engine.GameRTCEngine;
+import com.ss.bytertc.engine.game.GameRTCEngineConfig;
+import com.ss.bytertc.engine.game.GameRTCPositionInfo;
+import com.ss.bytertc.engine.game.GameRTCReceiveRange;
+import com.ss.bytertc.engine.game.GameRTCRoomConfig;
+import com.bytedance.ttgame.module.notice.api.INoticeService;
+import com.bytedance.ttgame.module.notice.api.ResponseData;
+import androidx.core.content.ContextCompat;
+import android.app.NotificationChannel;
+import com.bytedance.ttgame.module.loccom.api.ILocationCommonService;
+import com.bytedance.ttgame.module.loccom.api.callback.LocationCallback;
+import com.bytedance.ttgame.sdk.module.location.model.Location;
+import com.bytedance.ttgame.module.rating.api.configration.IRatingConfig;
+import com.bytedance.ttgame.module.rating.api.configration.IRatingUIConfig;
+import com.bytedance.ttgame.module.rating.api.IRatingService;
+import com.bytedance.ttgame.module.rating.api.callback.CustomDialogManager;
+import com.bytedance.ttgame.module.rating.api.callback.ICustomRatingDialog;
+import com.bytedance.ttgame.module.rating.api.callback.IRatingDialogCallback;
+import com.bytedance.ttgame.rocketapi.account.IAccountStatusChangeListener;
+import com.bytedance.ttgame.rocketapi.account.CpUploadInfo;
+import com.bytedance.ttgame.rocketapi.account.IExitCallback;
+import com.bytedance.ttgame.module.friendchain.api.ChainPermissionResult;
+import com.bytedance.ttgame.module.friendchain.api.FriendChainInfoResult;
+import com.bytedance.ttgame.module.friendchain.api.IFriendChainService;
+import java.io.File;
+import com.bytedance.ttgame.module.compliance.api.protocol.IProtocolService;
+import com.bytedance.ttgame.module.gna.api.GnaClientAdapter;
+import com.bytedance.ttgame.module.gna.api.IGnaClient;
+import androidx.core.app.ActivityCompat;
+        </insert>
+    </gameActivityImportAdditions>
+	
+    <gameActivityOnCreateFinalAdditions>
+        <insert>
+		NativeCalls.AllowJavaBackButtonEvent(true);
+		PreStartGsdk();
+		Report("guide_flow", "game_start", "1","");
+        if(!UseDisplayCutout)
+			NotchTools.getFullScreenTools().fullScreenUseStatusForActivityOnCreate(this, this);
+		
+		
+        </insert>
+    </gameActivityOnCreateFinalAdditions>
+    <gameActivityClassAdditions>
+		<insert>
+	private boolean mIsEmulator = false;
+	private final int  mPlatformId = 1;
+	private final static int mProjectId = 7881;
+	private  String mChannelId = "Bytes";
+	private  String mDeviceId;
+	private  String mUserAgreementUrl;
+	private  String mPrivacyPlicyUrl;
+	private  boolean mListenBatteryChange = false;
+	private GameRTCEngine mVoiceEngine = null;
+	private String		  mRoomId = "";
+	private static final int PERMISSION_REQUEST_CODE = 1106;
+	public void GetPlatformInfo(){
+		mChannelId = RocketCn.getInstance().getComponent(IRocketCnApi.class).getChannelOp(this);
+		mDeviceId = RocketCn.getInstance().getDeviceID(this);
+		NativeCalls.UELogLog("GetPlatformInfo ,mChannelId="+mChannelId + ",mDeviceId="+mDeviceId);
+		NativeCallBack.SetPlatformInfo(mPlatformId, String.valueOf(mProjectId), mChannelId, mDeviceId);
+	}
+	
+	public class GameGnaClientAdapter extends GnaClientAdapter {
+		private Context mContext;
+
+		GameGnaClientAdapter(Context context) {
+			super(context);
+			mContext = context;
+		}
+
+		@Override
+		public boolean enableVerboseLog() {
+			return true;
+		}
+	}
+
+	public void PreStartGsdk() {
+		if(SplashActivity.isGsdkInit){
+			RocketCn.getInstance().isEmulator(new IEmulatorCallback&lt;Boolean&gt;() {
+				@Override
+				public void onSuccess(Boolean result, String emulatorType){
+					mIsEmulator = result;
+					Log.verbose("gsdk get   isEmulator result " + result + emulatorType);
+				}
+				@Override
+				public void onFailed(GSDKError gsdkError) {
+					NativeCalls.UELogError("gsdk get   isEmulator error " + gsdkError.toString());
+				}
+			});
+			
+			IGnaClient gnaClient = RocketCn.getInstance().getComponent(IGnaClient.class);
+			gnaClient.tryInitGna(new GameGnaClientAdapter(getApplicationContext()));
+
+			RocketCn.getInstance().protocolAddress(Get(), new ICallback&lt;ProtocolAddressData&gt;() {
+				@Override
+				public void onSuccess(@Nullable ProtocolAddressData result) {
+					Log.verbose("gsdk protocolAddress 用户协议：" + result.userAgreementUrl + "，隐私政策：" + result.privacyPolicy);
+					mUserAgreementUrl = result.userAgreementUrl;
+					mPrivacyPlicyUrl = result.privacyPolicy;
+				}
+
+				@Override
+				public void onFailed(@Nullable ProtocolAddressData exception) {
+
+				}
+			});
+			RocketCn.getInstance().getComponent(IAntiAddictionService.class).setEnableAlert(false);
+			
+			if(GetChannelOp().compareTo("bsdk") != 0){
+				RocketCn.getInstance().onAccountStatusChangedListener(this, new IAccountStatusChangeListener() {
+					@Override
+					public void onLogout() {
+						NativeCallBack.AccountCallback(NativeCallBack._accountLogout, true, "", "{}", "");
+						//if(RocketCn.getInstance().getComponent(IAntiAddictionService.class).isActive())
+						//	RocketCn.getInstance().getComponent(IAntiAddictionService.class).stop();
+					}
+
+					@Override
+					public void onSwitchAccount(UserInfoResult userInfoResult) {
+						Gson gson = new Gson();
+						String jsonData = gson.toJson(userInfoResult.data.getExtraData());
+						NativeCallBack.AccountCallback(NativeCallBack._accountSwitch, true, userInfoResult.data.getToken(), jsonData, "");
+					}
+
+					@Override
+					public void onExitGame(boolean isExit) {
+
+					}
+				});
+			}
+		}
+		else{
+			NativeCalls.UELogError("[sdk]gsdk init failed, check network!");
+		}
+	}
+
+	public boolean GsdkIsInit() {
+		return SplashActivity.isGsdkInit;
+	}
+	
+	public String GetUserAgreementUrl(){
+		return mUserAgreementUrl;
+	}
+
+	public String GetPrivacyPolicy(){
+		return mPrivacyPlicyUrl;
+	}
+
+	public void LoginNoUi(int nType) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				RocketCn.getInstance().authLogin(Get(), nType, new ByteSdkAccoutCallback(NativeCallBack._accountLogin));
+			}
+		});
+	}
+
+	public void GuestLogin() {
+		//LoginNoUi(LoginType.VISITOR);
+		ShowSdkLoginPanel();
+	}
+
+	public void ShowSdkLoginPanel(){
+		NativeCalls.UELogWarning("[gsdk]login,show loginpanel");
+		//if(RocketCn.getInstance().getComponent(IAntiAddictionService.class).isActive())
+		//	RocketCn.getInstance().getComponent(IAntiAddictionService.class).stop();
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				RocketCn.getInstance().getComponent(IAccountService.class).login(Get(), new ByteSdkAccoutCallback(NativeCallBack._accountLogin), () -&gt; {
+					Log.verbose("sdk login panel close ");
+				});
+			}
+		});
+	}
+	
+	//https://gdev.nvsgames.cn/doc/MainlandChina/Native/CoreModules/GameLogin/GameLogin/Android#25-%E7%94%A8%E6%88%B7%E4%B8%AD%E5%BF%83
+    public void OpenUserCenter(){
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				RocketCn.getInstance().openUserCenter(Get(), true, new ByteSdkAccoutCallback(NativeCallBack._accountUserCenter));
+			}
+		});
+	}
+	
+	public void NetDiagnosis(String target,  int timeout){
+		INetDiagnosisRequest mNetDiagnosisRequest =  RocketCn.getInstance().getComponent(INetExperienceService.class).createRequest(NetExperienceRequestType.DIAGNOSE_TARGET, target, NetDetectType.NET_DETECT_ICMP_PING, timeout, new INetDiagnosisCallback() {
+			@Override
+			public void onDiagnosisComplete(GSDKError error, String report) {
+                if(error.getCode() == 0)
+			        NativeCallBack.NetDiagnosisCallback(true, 0, report);
+                else
+                    NativeCallBack.NetDiagnosisCallback(false, error.getCode(), error.getMessage());
+			}
+		});
+		mNetDiagnosisRequest.start();
+	}
+	
+	public void VerifyActivationCode(String code){
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				RocketCn.getInstance().verifyActivationCodeWithoutUI(code,  new ByteSdkAccoutCallback(NativeCallBack._accountLogin));
+			}
+		});
+	}
+
+	public void Logout() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				RocketCn.getInstance().logout(Get(),  new ByteSdkAccoutCallback(NativeCallBack._accountLogout));
+				//if(RocketCn.getInstance().getComponent(IAntiAddictionService.class).isActive())
+				//	RocketCn.getInstance().getComponent(IAntiAddictionService.class).stop();
+				NativeCalls.UELogWarning("[gsdk]login out,stop IAntiAddictionService");
+			}
+		});
+	}
+
+	public void GetHistoryAccounts() {
+
+	}
+	
+	public void DeleteHistoryAccount(long userid){
+
+	}
+
+	public void SwitchAccount(long userid) {
+		//3.14.0.0版本该接口废弃
+	}
+
+	public void AccountBind(int nAccoutType) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+
+			}
+		});
+	}
+
+	public void AccountForceRebend(int type, int force) {
+
+	}
+
+	public void AccountUnBind(int nAccountType) {
+
+	}
+
+	public boolean CanAutoLogin() {
+		boolean bCanAuto = RocketCn.getInstance().isCanAutoLoginNoUI();
+		if(bCanAuto)
+			Report("guide_flow", "byte_sdk_can_auto_login", "60","");
+		else
+			Report("guide_flow", "byte_sdk_cannot_auto_login", "61","");
+		bCanAuto =false;
+		return bCanAuto;
+	}
+
+	public void AutoLogin() { 
+		Report("guide_flow", "100100", "57","");
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+			}
+		});
+	}
+
+	public String GetLatestUserInfo() {
+		Gson gson = new Gson();
+		return gson.toJson(RocketCn.getInstance().getLatestUserInfoSync());
+	}
+
+	public boolean IsLogin() {
+		return RocketCn.getInstance().isLogin();
+	}
+
+	private void ToDoRealName(String url,boolean bMustSuccess){
+		Bundle bundle = new Bundle();
+		//if(RocketCn.getInstance().getComponent(IAntiAddictionService.class).isActive())
+		//	RocketCn.getInstance().getComponent(IAntiAddictionService.class).stop();
+		RocketCn.getInstance().getComponent(IWebViewService.class).showWebViewWithCallback(this, "", url, bundle, new IExitWebViewCallback() {
+					@Override
+					public void onExit() {
+						RocketCn.getInstance().isVerifyV2(Get(), new IRealVerifyListener() {
+							@Override
+							public void onResponse(RealVerifyInfo realVerifyInfo) {
+								if (realVerifyInfo.isVerify()) {
+									GetAntiAddictionState();
+									Report("guide_flow", "byte_sdk_verified_done", "73","");
+								}
+								else{
+									NativeCallBack.AntiAddicationStateChange(-1, "user cancel");
+								}
+							}
+
+							@Override
+							public void onFail(RealVerifyInfo realVerifyInfo) {
+								NativeCallBack.AntiAddicationStateChange(-1, "fail,retry");
+							}
+						});
+					}
+				}, new IWebViewErrorCodeCallback() {
+					@Override
+					public void onErrorResponse(GSDKError gsdkError) {
+					}
+				}
+		);
+	}
+
+	public void RealNameVerify(String url,boolean bMustSuccess) {
+		Log.verbose("[gsdk] to RealNameVerify isVerifyV2");
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				RocketCn.getInstance().isVerifyV2(Get(), new IRealVerifyListener() {
+					@Override
+					public void onResponse(RealVerifyInfo realVerifyInfo) {
+						if (!realVerifyInfo.isVerify()) {
+							ToDoRealName(url, bMustSuccess);
+						}
+						else {
+							GetAntiAddictionState();
+							Report("guide_flow", "byte_sdk_verified_done", "73","");
+						}
+					}
+
+					@Override
+					public void onFail(RealVerifyInfo realVerifyInfo) {
+						if (!IsLogin())
+							NativeCallBack.AccountCallback(NativeCallBack._accountRealNameResult, false, String.valueOf(realVerifyInfo.getGsdkError().getCode()), realVerifyInfo.getGsdkError().getMessage(), String.valueOf(realVerifyInfo.getGsdkError().getExtraErrorCode()));
+						else {
+							LatestUserInfo latestUserInfo = RocketCn.getInstance().getLatestUserInfoSync();
+							if(latestUserInfo == null)
+								NativeCallBack.AccountCallback(NativeCallBack._accountRealNameResult, false, String.valueOf(realVerifyInfo.getGsdkError().getCode()), realVerifyInfo.getGsdkError().getMessage(), String.valueOf(realVerifyInfo.getGsdkError().getExtraErrorCode()));
+							else if (!latestUserInfo.gameUserInfo.isVerified  ) {
+								ToDoRealName(url, bMustSuccess);
+							}
+							else{
+								GetAntiAddictionState();
+							}
+						}
+					}
+				});
+			}
+		});
+	}
+	
+	private void SetAntiAddictionListen()
+	{
+		//if(!RocketCn.getInstance().getComponent(IAntiAddictionService.class).isActive())
+		//	RocketCn.getInstance().getComponent(IAntiAddictionService.class).start(0L);
+		NativeCalls.UELogWarning("[gsdk]SetStatusChangedListener");
+		RocketCn.getInstance().getComponent(IAntiAddictionService.class).setStatusChangedListener(new IAntiAddictionStatusListener() {
+			@Override
+			public void onChanged(AntiAddictionStatus antiAddictionStatus) {
+				NativeCalls.UELogWarning("[gsdk]SetAntiAddictionListen callback :" + antiAddictionStatus.getCode() + "," + antiAddictionStatus.getMessage());
+				NativeCallBack.AntiAddicationStateChange(antiAddictionStatus.getCode(),antiAddictionStatus.getMessage());
+			}
+		});
+	}
+
+	public void GetAntiAddictionState()
+	{
+		RocketCn.getInstance().getComponent(IAntiAddictionService.class).getServiceStatus(this, new IAntiAddictionStatusListener() {
+			@Override
+			public void onChanged(AntiAddictionStatus antiAddictionStatus) {
+				if(antiAddictionStatus != null) {
+					NativeCalls.UELogWarning("[gsdk]GetAntiAddictionState callback :" + antiAddictionStatus.getCode() + "," + antiAddictionStatus.getMessage());
+					NativeCallBack.AntiAddicationStateChange(antiAddictionStatus.getCode(), antiAddictionStatus.getMessage());
+					if(antiAddictionStatus.getCode() == 4 || antiAddictionStatus.getCode() == 10){
+						SetAntiAddictionListen();
+					}
+				}
+			}
+		});
+	}
+
+	public void OpenUrl(String title, String url, String extraData){
+		OpenUrlBySDk(title,url,extraData);
+	}
+	
+	public static void OpenUrlBySDk(String title, String url, String extraData){
+		Bundle bundle = new Bundle();
+		RocketCn.getInstance().getComponent(IWebViewService.class).showWebViewWithCallback(Get(), title, url,bundle,new IExitWebViewCallback() {
+					@Override
+					public void onExit() {
+						NativeCallBack.OnSdkWebViewUrlClosed(url);
+					}
+				},
+				new IWebViewErrorCodeCallback(){
+					@Override
+					public void onErrorResponse(GSDKError response){
+						if(response.isSuccess())
+							return;
+						NativeCallBack.OnSdkWebViewOpenUrlError(url, response.getCode(), response.getMessage(),
+								response.getExtraErrorCode(), response.getExtraErrorMessage(),response.getAdditionalInfo());
+					}
+				}
+		);
+	}
+
+	public void SetDebug(boolean bDebug) {
+		RocketCn.getInstance().setDebug(this, bDebug);
+	}
+
+	public void setSandboxEnable(boolean enable) {
+		RocketCn.getInstance().setSandboxEnable(this, enable);
+	}
+	
+	public boolean IsSandbox(){
+		return RocketCn.getInstance().isSandboxEnable(this);
+	}
+
+	public boolean IsEmulator() {			
+		return mIsEmulator;
+	}
+
+	public double GetBatteryLevel() {
+		if(!mListenBatteryChange ){
+			mListenBatteryChange = true;
+			RocketCn.getInstance().batteryRegisterReceiver(Get(), new StateChangedCallback() {
+				@Override
+				public void stateChanged(boolean status) {
+					NativeCallBack.BatteryStateChangeCallback(status);
+				}
+			});
+		}
+		return RocketCn.getInstance().getBatteryLevel(this);
+	}
+	
+	public boolean isCharging(){
+		return RocketCn.getInstance().isCharging(this);
+	}
+
+	public boolean CheckProtocolVersion() {
+		return  RocketCn.getInstance().getComponent(IProtocolService.class).checkProtocolVersion();
+	}
+
+	public void SetUserHasAgreedProtocolsUpdate(){
+		RocketCn.getInstance().getComponent(IProtocolService.class).setUserHasAgreedProtocolsUpdate();
+	}
+	
+	public String GetSdkOpenId()
+	{
+		return RocketCn.getInstance().getSdkOpenId(this);
+	}
+
+	private static boolean isInteger(String str) {
+		Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+		return pattern.matcher(str).matches();
+	}
+	private static int mReportUuseruniqueid = 100;
+	public void Report(String event, String paramsName, String value, String extraData) {
+		SdkReport(event,paramsName,value, extraData );
+	}
+
+	public static void SdkReport(String event, String paramsName, String value, String extraData) {
+		JSONObject jsonObject = new JSONObject();
+		Log.verbose("Report event=" + event + ",paramsName=" + paramsName + ",value="+value);
+		try {
+			if(event.compareTo("guide_flow") == 0) {
+				jsonObject.put("time", System.currentTimeMillis() / 1000);
+				jsonObject.put("app_id", mProjectId);
+				jsonObject.put("event", event);
+				jsonObject.put("user_unique_id", String.valueOf(mReportUuseruniqueid) + "___");
+				jsonObject.put("real_package_name", "___");
+				if(!isInteger(value)){
+					NativeCalls.UELogError("sdk,report data, guide_flow, guide_id=" + value + ",paramsName=" +paramsName);
+					return;
+				}
+				int nGuideId = Integer.parseInt(value);
+				jsonObject.put("guide_id", nGuideId);
+				jsonObject.put("duration", 0);
+				jsonObject.put("info",extraData);
+				mReportUuseruniqueid++;
+				if (mReportUuseruniqueid == 1000)
+					mReportUuseruniqueid = 100;
+				RocketCn.getInstance().getComponent(IRocketCnApi.class).onEvent(event, jsonObject);
+			}
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void Report(String event, String jsonContent){
+		try {
+			JSONObject jsonObject = new JSONObject(jsonContent);
+			Log.verbose("Report event=" + event + ",content=" + jsonContent);
+			RocketCn.getInstance().getComponent(IRocketCnApi.class).onEvent(event, jsonObject);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void UploadFile(String filePath, long roleid, String roleName){
+		Map&lt;String, String&gt; map = new HashMap&lt;&gt;();
+		map.put("RoleId", String.valueOf(roleid));
+		map.put("RoleName", roleName);
+		RocketCn.getInstance().getComponent(IFileUploadService.class).uploadFileAtPath("","", map, filePath, succ -&gt;{
+			NativeCallBack.UpdateFileCallback(succ, filePath);
+		});
+	}
+	
+	public void UploadException(String name, String reason, String stackTrace){
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				RocketCn.getInstance().getComponent(ICrashService.class).reportCrash( reason, name,stackTrace);
+			}
+		});
+	}
+
+	public int GetCurrentNetState(){
+		return RocketCn.getInstance().getComponent(IRocketCnApi.class).getCurrentNetState(this);
+	}
+	
+	public void JudgeAgeGate(){
+
+	}
+
+	public void ModifyAgeGateStatus(boolean status){
+
+	}
+
+	public boolean QueryAgeGateStatus(){
+		return  true;
+	}
+	
+	public void CDKeyExchange(String cdkey, String roleid, String serverid){
+		CDKeyInfo cdKeyInfo = new CDKeyInfo(cdkey, roleid, serverid);
+		RocketCn.getInstance().getComponent(ICDKeyService.class).cdkeyExchange(cdKeyInfo, new ICDKeyService.CDKeyExchangeCallback() {
+			@Override
+			public void onSuccess(CDkeyExchangeResult cDkeyExchangeResult) {
+				NativeCallBack.CDKeyExchangeCallback(true, cDkeyExchangeResult.getCode(),cDkeyExchangeResult.getMessage());
+			}
+
+			@Override
+			public void onFail(GSDKError gsdkError) {
+				NativeCallBack.CDKeyExchangeCallback(false, gsdkError.getCode(), gsdkError.getMessage());
+			}
+		});
+	}
+	
+	public void addLocalNotification(String title, String body, long nDelayTime){
+		RocketCn.getInstance().getComponent(IPushService.class).addLocalNotification(title, body, nDelayTime, null, null, new ILocalPushCallback() {
+			@Override
+			public void onSuccess(String s) {
+
+			}
+
+			@Override
+			public void onFail(GSDKError gsdkError) {
+
+			}
+		});
+	}
+	
+	public void fetchNotices(int nScene, String savePath, String language, String otherParams){
+		HashMap&lt;String, String&gt; params = new HashMap&lt;&gt;();
+		params.put("scene", String.valueOf(nScene));
+		List&lt;String&gt; ExParams = Arrays.asList(otherParams.split(","));
+		params.put("game_language",language);
+		if(ExParams.size() % 2 == 0){
+			for(int i=0; i &lt; ExParams.size(); i=i+2){
+				params.put(ExParams.get(i), ExParams.get(i+1));
+			}
+		}
+		INoticeService noticeService = RocketCn.getInstance().getComponent(INoticeService.class);
+		noticeService.fetchNotices(this, params, new INoticeService.FetchNoticesCallback() {
+			@Override
+			public void onSuccess(ResponseData data) {
+				Gson gson = new Gson();
+				String jsonData = gson.toJson(data.getData());
+				if(savePath != null &amp;&amp; savePath.length() &gt; 10){
+					try {
+						FileWriter writer = new FileWriter(savePath, false);
+						writer.write(jsonData);
+						writer.close();
+						NativeCallBack.FetchNoticeCallback(true, true, savePath, 0);
+					}
+					catch (Exception e){
+						NativeCalls.UELogError("java wirte file " + savePath + ",errorinfo:" + e.toString());
+						NativeCallBack.FetchNoticeCallback(true, false, jsonData, 0);
+					}
+				}
+				else{
+					NativeCallBack.FetchNoticeCallback(true, false, jsonData, 0);
+				}
+			}
+
+			@Override
+			public void onFail(GSDKError error) {
+				NativeCallBack.FetchNoticeCallback(false, false, error.getMessage(), error.getCode());
+			}
+		});
+	}
+	
+	private boolean InitVoice(){
+		if(mVoiceEngine == null){
+			GameRTCEngineConfig config = new GameRTCEngineConfig();
+			RTCEventHandler pHandle = new RTCEventHandler();
+			mVoiceEngine = GameRTCEngine.create(this, config, pHandle,"");
+			if(mVoiceEngine == null){
+				Log.verbose("InitVoice GamemVoiceEngine.create return null");
+				return false;
+			}
+			pHandle.SetRtcEngine(mVoiceEngine);
+			mVoiceEngine.setAudioScenario(GameRTCEngine.AudioScenarioType.AUDIO_SCENARIO_COMMUNICATION);
+		}
+		return true;
+	}
+
+	private void UnintVoice(){
+		if(mVoiceEngine != null){
+			GameRTCEngine.destroy();
+			mVoiceEngine = null;
+		}
+	}
+
+	public void VoiceJoinRoom(String roomId, String userid, String token, int roomType, int volumeIndication, boolean enableRangeAudio){
+		if(mRoomId != null &amp;&amp; !mRoomId.isEmpty()){
+			NativeCalls.UELogError("[RTC]VoiceJoinRoom,has joinroom=" + roomId);
+			return;
+		}
+		mRoomId = roomId;
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(!InitVoice())
+					return;
+				GameRTCRoomConfig config = new GameRTCRoomConfig();
+				if(roomType == 0)
+					config.roomType = GameRTCRoomConfig.RoomType.RTC_ROOM_TEAM;
+				else
+					config.roomType = GameRTCRoomConfig.RoomType.RTC_ROOM_WORLD;
+				config.enableRangeAudio = enableRangeAudio;
+				config.enableSpatialAudio = false;
+				config.audioVolumeIndicationInterval = volumeIndication;
+				mVoiceEngine.joinRoom(roomId, userid, token, config);
+			}
+		});
+
+	}
+
+	public void VoiceLeaveRoom(){
+		if(mRoomId == null || mRoomId.isEmpty()){
+			NativeCalls.UELogError("[RTC]leaveroom error,roomid is null.");
+			return;
+		}
+		String tempRoomId = mRoomId;
+		mRoomId = "";
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(!InitVoice())
+					return;
+				mVoiceEngine.leaveRoom(tempRoomId);
+			}
+		});
+
+	}
+
+	public void VoiceUpdateToken(String token){
+		if(mRoomId == null || mRoomId.isEmpty()){
+			NativeCalls.UELogError("[RTC]VoiceUpdateToken error,roomid is null.");
+			return;
+		}
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(!InitVoice())
+					return;
+				mVoiceEngine.updateToken(mRoomId, token);
+			}
+		});
+
+	}
+
+	public void VoiceSetReceivelRange( int disMin, int disMax ){
+		if(mRoomId == null || mRoomId.isEmpty()){
+			NativeCalls.UELogError("[RTC]VoiceSetReceivelRange error,roomid is null.");
+			return;
+		}
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(!InitVoice())
+					return;
+				GameRTCReceiveRange range = new GameRTCReceiveRange(disMin, disMax);
+				mVoiceEngine.updateReceiveRange(mRoomId, range);
+			}
+		});
+
+	}
+
+	public void VoiceUpdatePostion(int x, int y, int z){
+		if(mRoomId == null || mRoomId.isEmpty()){
+			NativeCalls.UELogError("[RTC]VoiceUpdatePostion error,roomid is null.");
+			return;
+		}
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(!InitVoice())
+					return;
+				GameRTCPositionInfo positionInfo = new GameRTCPositionInfo(x,y,z);
+				mVoiceEngine.updatePosition(mRoomId, positionInfo);
+			}
+		});
+	}
+
+	public void VoiceEnableMicrophone(boolean bEnable){
+		if(mRoomId == null || mRoomId.isEmpty()){
+			NativeCalls.UELogError("[RTC]VoiceEnableMicrophone error,roomid is null.");
+			return;
+		}
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(!InitVoice())
+					return;
+				mVoiceEngine.enableMicrophone(mRoomId, bEnable);
+				mVoiceEngine.enableAudioSend(mRoomId, bEnable);
+			}
+		});
+	}
+
+	public void VoiceEnableAudioReceive(String userId, boolean bEnable){
+		if(mRoomId == null || mRoomId.isEmpty()){
+			NativeCalls.UELogError("[RTC]VoiceEnableAudioReceive error,roomid is null.");
+			return;
+		}
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(!InitVoice())
+					return;
+				mVoiceEngine.enableAudioReceive(mRoomId, userId, bEnable);
+			}
+		});
+	}
+
+	public void VoiceEnableSpeakerphone(boolean bEnable){
+		if(mRoomId == null || mRoomId.isEmpty()){
+			NativeCalls.UELogError("[RTC]VoiceEnableSpeakerphone error,roomid is null.");
+			return;
+		}
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(!InitVoice())
+					return;
+				mVoiceEngine.enableSpeakerphone(mRoomId, bEnable);
+			}
+		});
+	}
+	
+	public void VoiceSetRecordingVolume(int volume){
+		if(mRoomId == null || mRoomId.isEmpty()){
+			NativeCalls.UELogError("[RTC]VoicesetRecordingVolume error,roomid is null.");
+			return;
+		}
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(!InitVoice())
+					return;
+				mVoiceEngine.setRecordingVolume(volume);
+			}
+		});
+	}
+
+	public void VoiceSetPlaybackVolume(int volume) {
+		if (mRoomId == null || mRoomId.isEmpty()) {
+			NativeCalls.UELogError("[RTC]VoiceSetPlaybackVolume error,roomid is null.");
+			return;
+		}
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (!InitVoice())
+					return;
+				mVoiceEngine.setPlaybackVolume(volume);
+			}
+		});
+	}
+	
+	public void SetUserInfoForSecureService(String roleid, String serverId){
+		RocketCn.getInstance().getComponent(ISecureService.class).setUserInfo(ByteSdkAccoutCallback.userType,roleid,serverId);
+	}
+
+	@Override
+	public void onNotchPropertyCallback(NotchProperty notchProperty) {
+		int marginTop = notchProperty.getMarginTop();
+		android.view.Display display = getWindowManager().getDefaultDisplay();
+		android.graphics.Point displaySize = new android.graphics.Point();
+		display.getRealSize(displaySize);
+		int barHeigth = NotchStatusBarUtils.getStatusBarHeight(Get().getApplicationContext());
+		if (!notchProperty.isNotch()) {
+			float nRate = 0;
+			if (displaySize.y &gt; displaySize.x)
+				nRate = ((float) displaySize.y) / displaySize.x;
+			else
+				nRate = ((float) displaySize.x) / displaySize.y;
+			//19:6  =1.7777777778
+			if (nRate &gt; 1.8) {
+				marginTop = barHeigth;
+			}
+		} else {
+			if (notchProperty.getNotchIsHide()) {
+				marginTop = 0;
+				Log.verbose("[saftzone]NotchIsHide");
+			} else
+				marginTop = Math.max(marginTop, barHeigth);
+		}
+
+		// store safezone independent of resolution
+		float invX = 1.0f / (displaySize.x != 0.0f ? displaySize.x : 1.0f);
+
+		safezoneF.left = (safezone.left = marginTop) * invX;
+		safezoneF.top = 0;
+		safezoneF.right = (safezone.right = marginTop) * invX;
+		safezoneF.bottom = 0;
+		Log.verbose("[saftzone]to nativeSetSafezoneInfo, height= " + marginTop + ",Resolution=" + displaySize.toString() + ",saft=" + safezoneF.toString() + ",ismotch=" + notchProperty.isNotch() + ",ishide=" + notchProperty.getNotchIsHide());
+		nativeSetSafezoneInfo(displaySize.y &gt; displaySize.x, safezoneF.left, safezoneF.top, safezoneF.right, safezoneF.bottom);
+	}
+	
+	private static final int REQUEST_PERMISSION_SETTING = 1;
+	public void OpenAppSetting(){
+		Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+		Uri uri = Uri.fromParts("package", getPackageName(), null);
+		intent.setData(uri);
+		startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
+	}
+	public boolean IsPermissionGranted(String requestPermission){
+		if (ContextCompat.checkSelfPermission(this, requestPermission) != PackageManager.PERMISSION_GRANTED)
+		{
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+
+	public boolean RequestPermission(String requestPermission, boolean bFirstRequest){
+		if(bFirstRequest){
+			ActivityCompat.requestPermissions(this, new String[]{requestPermission}, PERMISSION_REQUEST_CODE);
+			return true;
+		}
+		else{
+			boolean bShowUi = ActivityCompat.shouldShowRequestPermissionRationale(this, requestPermission);
+			ActivityCompat.requestPermissions(this, new String[]{requestPermission}, PERMISSION_REQUEST_CODE);
+			return bShowUi;
+		}
+	}		
+	
+	public boolean IsNotificationsAllowed(String channelName){
+		boolean bAllowed = NotificationManagerCompat.from(getApplicationContext()).areNotificationsEnabled();
+		if(!bAllowed)
+			return false;
+		if(channelName == null || channelName.length() == 0)
+			return true;
+		NotificationChannel channel = NotificationManagerCompat.from(getApplicationContext()).getNotificationChannel(channelName);
+		if(Build.VERSION.SDK_INT >= 26 &amp;&amp;  channel != null){
+			return channel.getImportance() != NotificationManager.IMPORTANCE_NONE;
+		}
+		return true;
+
+	}
+	
+	public void GetCountryCode(){
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				RocketCn.getInstance().getComponent(ILocationCommonService.class).getLocationByIp(Get(), new LocationCallback &lt;Location&gt;() {
+					@Override
+					public void onSuccess(Location data) {
+						NativeCallBack.OnGetCountryCode(true, data.getCountryCode(), 0,data.getCountry(), data.getProvince());
+					}
+
+					@Override
+					public void onFailed(GSDKError error) {
+						NativeCallBack.OnGetCountryCode(false, error.getMessage(), error.getCode(), "","");
+					}
+				});
+			}
+		});
+	}
+	
+	public void ChangeLanguage(String langType){
+		
+	}
+	
+	//好评配置项
+	private class RatingConfig implements IRatingConfig {
+
+		private boolean mUserDefaultUi = true;
+		public RatingConfig(boolean defulatUi){
+			mUserDefaultUi = defulatUi;
+		}
+		@Override public void goToFeedback(Context context, String feedbackUrl) {
+			//点击了差评按钮
+			Log.verbose("goToFeedback " + feedbackUrl);
+			GameActivity.OpenUrlBySDk("", feedbackUrl,"");
+		}
+
+		@Override public boolean needShowDefaultDialog() {
+			return mUserDefaultUi;
+		}
+
+		@Override public IRatingUIConfig defaultUIConfig() {
+			return new RatingUIConfig();
+		}
+
+		@Override public boolean serverJudge() {
+			return false;
+		}
+
+		@Override public String packageName() {
+			return Get().getPackageName();
+		}
+	}
+
+	//默认UI元素配置
+	private class RatingUIConfig extends IRatingUIConfig {
+
+		@Override public String getMainTitleString() {
+			return "喜欢该游戏吗?";
+		}
+
+		@Override public String getSecondTitleString() {
+			return "您的好评是对我们最大的鼓励";
+		}
+
+		@Override public String getPositiveBtnText() {
+			return "好评";
+		}
+
+		@Override public String getNegativeBtnText() {
+			return "差评";
+		}
+	}
+
+
+	public void ShowRatingUi(){
+		IRatingService mRatingService = RocketCn.getInstance().getComponent(IRatingService.class);
+		mRatingService.showRatingView(this, new RatingConfig(true));
+	}
+	
+	private IRatingDialogCallback mRatingDialogCallback = null;
+	public void ShowRatingCustomUi(){
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				IRatingService mRatingService = RocketCn.getInstance().getComponent(IRatingService.class);
+				mRatingService.setCustomUICallback(new ICustomRatingDialog() {
+					@Override
+					public void onCustomRatingShow() {
+						Log.verbose("[sdk]ShowRatingCustomUi");
+						if(mRatingDialogCallback == null)
+							mRatingDialogCallback = CustomDialogManager.Companion.getInstance().getIPraiseDialogCallback();
+					}
+				});
+				mRatingService.showRatingView(Get(), new RatingConfig(false));
+			}
+		});
+	}
+
+	public void DismissRatingCustomUi(){
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(mRatingDialogCallback != null)
+					mRatingDialogCallback.onDialogDismiss();
+				mRatingDialogCallback = null;
+			}
+		});
+	}
+
+	public void OnRatingPraiseBtnClick(){
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(mRatingDialogCallback != null)
+					mRatingDialogCallback.onPraiseBtnClick();
+			}
+		});
+	}
+
+	public void OnRatingFeedbackBtnClick(){
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(mRatingDialogCallback != null)
+					mRatingDialogCallback.onFeedbackBtnClick();
+			}
+		});
+	}
+	
+	public boolean IsBsdkPay(){
+		return GetChannelOp().compareTo("bsdk") == 0;
+	}
+
+	private void RegisterExtraPayCallback(){
+		
+	}
+
+	//amount: price   国内是分，国外是美分
+	public void Pay(String productId, int goodType, int amount, String currency, String roleId,String roleName,
+					int roleLevel, int roleVipLevel, String serverId,String extinfo1){
+		RocketPayInfo rocketPayInfo = new RocketPayInfo();
+		rocketPayInfo.setAmount(amount);
+		rocketPayInfo.setCurrency(currency);
+		rocketPayInfo.setExtraInfo(extinfo1);
+		rocketPayInfo.setProductId(productId);
+		rocketPayInfo.setRoleId(roleId);
+		rocketPayInfo.setRoleLevel(String.valueOf(roleLevel));
+		rocketPayInfo.setRoleVipLevel(roleVipLevel);
+		rocketPayInfo.setRoleName(roleName);
+		rocketPayInfo.setServerId(serverId);
+		rocketPayInfo.setActivity("");
+		rocketPayInfo.setSdkOpenId(GetSdkOpenId());
+		rocketPayInfo.setGoodType(goodType);
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				RocketCn.getInstance().pay(Get(), rocketPayInfo, new IPayCallback&lt;RocketPayResult&gt;() {
+					@Override
+					public void onSuccess(@Nullable RocketPayResult result) {
+						if(result != null){
+							NativeCallBack.OnPayCallback(true, result.getGameOrderId(),
+									result.getGameProductId(),"", 0);
+						}else{
+							NativeCalls.UELogError("[sdk]pay success,but result is null, ???");
+						}
+					}
+
+					@Override
+					public void onFailed(@Nullable RocketPayResult exception) {
+						NativeCalls.UELogWarning("[pay]pay failed");
+						if(exception != null &amp;&amp; exception.gsdkError != null){
+							NativeCalls.UELogWarning("[pay]"+ exception.toString());
+							NativeCallBack.OnPayCallback(false, exception.getGameOrderId(),
+									exception.getGameProductId(),exception.gsdkError.getMessage(),exception.gsdkError.getCode());
+						}
+					}
+				});
+			}
+		});
+
+
+	}
+
+	public void QueryProducts(String productId){
+		
+	}
+
+	//获取商品及游戏币活动信息
+	public void QueryGoods(String roleId, String serverId, boolean bCurrency){
+		QueryGoodsParams params =  new QueryGoodsParams();
+		params.setRoleId(roleId);
+		params.setServerId(serverId);
+		params.setDoCurrencyAdapt(bCurrency);
+		RocketCn.getInstance().queryGoods(this, params, new IPayCallback&lt;RocketGoods&gt;() {
+			@Override
+			public void onSuccess(@Nullable RocketGoods result) {
+				if(result == null || result.getRocketGoods() == null){
+					NativeCallBack.OnQueryGoods(false,"UnKnown error,result is null",  -1);
+					return;
+				}
+				Gson gson = new Gson();
+				String jsonData = gson.toJson(result.getRocketGoods());
+				NativeCallBack.OnQueryGoods(true,jsonData, 0);
+			}
+
+			@Override
+			public void onFailed(@Nullable RocketGoods exception) {
+				if(exception== null || exception.getGsdkError() == null){
+					NativeCallBack.OnQueryGoods(false,"UnKnown error,exception is null",  -1);
+					return;
+				}
+				NativeCallBack.OnQueryGoods(false,exception.getGsdkError().getMessage(), exception.getGsdkError().getCode());
+			}
+		});
+	}
+
+	public void SetMinorLimit(String country, String content){
+		
+	}
+
+	public void GetMinorLimit(String country){
+		
+	}
+	
+	public void HasOpenFriendChainPermission(int platformId){
+		RocketCn.getInstance().getComponent(IFriendChainService.class).hasOpenFriendChainPermission(platformId, new ICallback &lt; ChainPermissionResult&gt;() {
+			@Override
+			public void onSuccess(ChainPermissionResult result) {
+				if (result == null) {
+					NativeCallBack.OnGetFriendChainPermission(platformId, false);
+				} else {
+					NativeCallBack.OnGetFriendChainPermission(platformId, result.hasPermission);
+				}
+			}
+
+			@Override
+			public void onFailed(ChainPermissionResult exception) {
+				NativeCallBack.OnGetFriendChainPermission(platformId, false);
+				NativeCalls.UELogWarning("[sdk]hasOpenFriendChainPermission failed " + exception.gsdkError.toString());
+			}
+		});
+	}
+
+	public void GetFriendChainInfo(int platformId){
+		RocketCn.getInstance().getComponent(IFriendChainService.class).showFriendChainInfo(platformId, true, new ICallback&lt;FriendChainInfoResult&gt;() {
+			@Override
+			public void onSuccess(FriendChainInfoResult result) {
+				NativeCallBack.OnGetFriendChainInfo(true,platformId, result.data.toString(),0);
+			}
+
+			@Override
+			public void onFailed(FriendChainInfoResult exception) {
+				NativeCallBack.OnGetFriendChainInfo(false,platformId, exception.gsdkError.getMessage(), exception.gsdkError.getCode());
+			}
+		});
+	}
+	
+	public void UploadRoleInfo(String serverId,String serverName,  String roleName, long roleId, int cupon, int vipLevel, int level, boolean isCreateRole,
+							boolean isMale, int createRoleTime, int Gold,String type){
+		List&lt;String&gt; balaceids = new ArrayList&lt;&gt;();
+		balaceids.add("1");
+		balaceids.add("2");
+		List&lt;String&gt; balacenames = new ArrayList&lt;&gt;();
+		balacenames.add("Gold");
+		balacenames.add("Cupon");
+		List&lt;String&gt; balancenums = new ArrayList&lt;&gt;();
+		balancenums.add(""+Gold);
+		balancenums.add(""+cupon);
+		CpUploadInfo cpUploadInfo = new CpUploadInfo.Builder()
+				.setType(type)
+				.setZoneid(serverId)
+				.setZonename(serverName)
+				.setRoleid(""+roleId)
+				.setRolename(roleName)
+				.setProfessionid("")
+				.setProfession("")
+				.setGender(isMale?"男":"女")
+				.setProfessionroleid("")
+				.setProfessionrolename("")
+				.setRolelevel(""+level)
+				.setPower("")
+				.setVip(""+vipLevel)
+				.setPartyid("")
+				.setPartyroleid("")
+				.setPartyrolename("")
+				.setChapter("")
+				.setServerId(serverId)
+				.setServerName(serverName)
+				.build();
+		if(type.equalsIgnoreCase("enterServer")){
+			 RocketCn.getInstance().enterGame(this, cpUploadInfo);
+		}
+		else if(type.equalsIgnoreCase("createRole")){
+			RocketCn.getInstance().createNewRole(this, cpUploadInfo);
+		}
+		else if(type.equalsIgnoreCase("levelUp")){
+			RocketCn.getInstance().roleLevelUp(this, cpUploadInfo);
+		}
+		else if(type.equalsIgnoreCase("exitServer")){
+			RocketCn.getInstance().roleExit(this, cpUploadInfo);
+		}
+	}
+	
+	
+	public void ChannelGeneralAction(int nCode){
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					JSONObject obj = new JSONObject();
+					obj.put("activity", GameActivity.this);
+					obj.put("code", nCode);
+					RocketCn.getInstance().channelGeneralAction(obj);
+				}catch (JSONException e){
+
+				}
+			}
+		});
+	}
+
+	public String GetChannelOp(){
+		return RocketCn.getInstance().getComponent(IRocketCnApi.class).getChannelOp(this);
+	}
+	
+	private void ToExitApp(){
+		runOnUiThread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				Log.verbose("ToExitApp begin");
+				RocketCn.getInstance().exit(Get(), new IExitCallback() {
+					@Override
+					public void onExit() {
+						finish();
+						android.os.Process.killProcess(android.os.Process.myPid());
+					}
+
+					@Override
+					public void noExitDialog() {
+						NativeCallBack.OnShowExitGameDialog();
+					}
+				});
+			}
+		});
+	}
+	
+	///TODO::
+	public void NetMpaStart(String beginLog){
+	}
+	public void NetMpaStop(String endLog){
+	}
+	public boolean NetMpaAddAddress(String[] ipAndPort, String context_id){
+		return false;
+	}
+	
+	///TODO::  国内SDK版本升级后要实现该功能
+	public void AddUploadLogfileFullPaths(String[]paths){
+	}
+	
+	public void AddUploadLogfileDirPath(String dir){
+	}
+
+	public void RestartApplication( ) {
+		Context context = getApplicationContext();
+		PackageManager pm = context.getPackageManager();
+		Intent intent = pm.getLaunchIntentForPackage(context.getPackageName());
+		int delayTime = 500;
+		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		PendingIntent restartIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+		alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + delayTime, restartIntent);
+		System.exit(0);
+	}
+    
+	public boolean UnZip(String filePath,String destDir, boolean bUpdateSo){
+		if(bUpdateSo)
+			destDir = GameApplication.mHotPatcherSoPath;
+		boolean bUnzipResult = HotPatcher.UnZip(filePath, destDir);
+		if(bUnzipResult &amp;&amp; bUpdateSo){
+			File fileTemp = new File(destDir + GameApplication.mUnrealSoHotPatcherName + ".tmp");
+			if(!fileTemp.exists()){
+				Log.verbose("[HotPatcher]unzip so file libUnreal_update.so.tmp not exist,error");
+				return false;
+			}
+			File fileSo = new File(destDir + GameApplication.mUnrealSoHotPatcherName);
+			if(fileSo.exists())
+			{
+				Log.verbose("[HotPatcher]unzip so file exist,delete it");
+				fileSo.delete();
+			}
+			fileTemp.renameTo(fileSo);
+		}
+		return bUnzipResult;
+	}	
+		
+		</insert>
+	</gameActivityClassAdditions>
+    <gameActivityImplementsAdditions>
+        <insert>OnNotchCallBack,</insert>
+    </gameActivityImplementsAdditions>
+	<gameActivityOnResumeAdditions>
+		<insert>
+		if (!UseDisplayCutout)
+		{			
+			NotchTools.getFullScreenTools().fullScreenUseStatusForOnWindowFocusChanged(this, null);
+		}
+		</insert>
+	</gameActivityOnResumeAdditions>
+	
+	<gameActivityOnNewIntentAdditions>
+		<insert>
+		RocketCn.getInstance().onNewIntent(this, newIntent);
+		</insert>
+	</gameActivityOnNewIntentAdditions>
+	
+	<gameActivityOnRestartAdditions>
+		<insert>
+		RocketCn.getInstance().onRestart(this);
+		</insert>
+	</gameActivityOnRestartAdditions>
+	
+	<gameActivityOnActivityResultAdditions>
+		<insert>
+		RocketCn.getInstance().onActivityResultForCurrent(this, requestCode, resultCode, data);
+		</insert>
+	</gameActivityOnActivityResultAdditions>
+	
+	<gameActivityOnKeyDownAdditions>
+		<insert>
+if(keyCode == KeyEvent.KEYCODE_BACK){
+			ToExitApp();
+			return true;
+		}
+		</insert>
+	</gameActivityOnKeyDownAdditions>
+	
+	<splashActivityImportAdditions>
+		<insert>
+import android.text.TextUtils;
+import com.bytedance.ttgame.base.GSDKError;
+import com.bytedance.ttgame.framework.module.callback.ICallback;
+import com.bytedance.ttgame.module.upgrade.api.IUpgradeCallBack;
+import com.bytedance.ttgame.module.upgrade.api.IUpgradeService;
+import com.bytedance.ttgame.rocketapi.RocketCn;
+import com.bytedance.ttgame.rocketapi.callback.InitCallback;
+import com.bytedance.ttgame.rocketapi.callback.InitResult;
+		</insert>
+	</splashActivityImportAdditions>
+	<splashActivityOnCreateAdditions>
+		<insert>
+		WaitForForceUpdate = true;
+		bNeedCheckPermissonOnCreate = false;
+		if(RocketCn.getInstance().isAgreedPrivacyProtection())
+		{
+			GameActivity.SdkReport("guide_flow", "gsdk_init_start", "2", "");
+			InitGsdk();
+		}
+		else{
+			Log.verbose("[sdk]privacyProtection open");
+			RocketCn.getInstance().privacyProtection(SplashActivity.this, new ICallback &lt;Boolean &gt;() {
+				@Override
+				public void onSuccess(Boolean result) {
+					Log.verbose("[sdk]privacyProtection success");
+					if(result){
+						GameActivity.SdkReport("guide_flow", "gsdk_init_start", "2", "");
+						InitGsdk();
+					}
+					else{
+						System.exit(0);
+					}
+				}
+
+				@Override
+				public void onFailed(Boolean exception) {
+					Log.verbose("privacyProtection onFailed is " + exception);
+					System.exit(0);
+				}
+			});
+		}
+		</insert>
+	</splashActivityOnCreateAdditions>
+	
+	<splashActivityClassAdditions>
+	<insert>
+	public  static boolean isGsdkInit = false;
+	public void InitGsdk() {
+		RocketCn.getInstance().init(SplashActivity.this.getApplication(), new InitCallback() {
+			@Override
+			public void onSuccess(InitResult initResult) {
+				isGsdkInit = true;
+				GameActivity.SdkReport("guide_flow", "gsdk_init_success", "3", "");
+				CheckForceUpdate();
+				CheckPermissions();
+			}
+
+			@Override
+			public void onFailed(GSDKError gsdkError) {
+				Log.verbose("[sdk]init failed ");
+				isGsdkInit = !TextUtils.isEmpty(RocketCn.getInstance().getDeviceID(SplashActivity.this));
+				CheckForceUpdate();
+				CheckPermissions();
+			}
+		});
+	}
+
+	private void  CheckForceUpdate(){
+		GameActivity.SdkReport("guide_flow", "byte_sdk_checkupgrade", "58","");
+		IUpgradeService upgradeService = RocketCn.getInstance().getComponent(IUpgradeService.class);
+		upgradeService.setUpgradeCallBack(new IUpgradeCallBack() {
+			@Override
+			public void onUpgradeSuccess() {
+				Log.verbose("[sdk]CheckForceUpdate is need upgrade");
+			}
+
+			@Override
+			public void onUpgradeFailed(GSDKError gsdkError) {
+				WaitForForceUpdate = false;
+				if (!WaitForPermission)
+				{
+					startActivity(GameActivityIntent);
+					finish();
+					overridePendingTransition(0, 0);
+				}
+			}
+		});
+		upgradeService.tryForceUpgradeV2(SplashActivity.this);
+	}
+	</insert>
+	</splashActivityClassAdditions>
+</root>
