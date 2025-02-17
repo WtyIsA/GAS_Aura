@@ -4,6 +4,8 @@
 #include "SelfGameInstance.h"
 
 #include "LuaManger.h"
+#include "UtilsProject.h"
+#include "Res/ResMgr.h"
 #include "UnLua/Private/UnLuaPrivate.h"
 
 USelfGameInstance::USelfGameInstance() : UGameInstance()
@@ -41,15 +43,15 @@ void USelfGameInstance::Shutdown()
 {
 	// UE_LOG(GAME, Display, TEXT("UEvolutionGameInstance::Shutdown"));
 	//    
-	// UResMgr::Free();
+	UResMgr::Free();
 	// UShortcutkeyMgr::Free();
 	// CHttpDownloadMgr::Free();
 	//  
-	// //ULuaManger::Get()->Shutdown();
+	ULuaManger::Get()->Shutdown();
 	ULuaManger::Free();
 	// UFPSManager::Free();
 	UnLua::Shutdown();
-	// GConfig->Flush(true,FUtilsProject::GetUserConfigPath());
+	GConfig->Flush(true,FUtilsProject::GetUserConfigPath());
 	Super::Shutdown();
 }
 

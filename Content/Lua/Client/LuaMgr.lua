@@ -33,13 +33,15 @@ function LuaMgr:Start()
     Global.g_luaMgr = self;
     Global.g_gameInstance = self:GetGameInstance();
     Global.g_resMgr = self:GetResMgr();
+    print(Global.g_resMgr)
     Global._ProjectPersistentDownloadDir = self:GetPersistentDownloadDir();
     --Global.g_FPSMgr = Global.g_luaMgr:GetFPSManager();
 
     require("Utils")
 
     --self:RequireAllCfgs()
-
+    Global.g_resMgr:Init();
+    
 end
 
 function LuaMgr:InitRequirePath()
@@ -57,6 +59,9 @@ function LuaMgr:RequireAllCfgs()
     package.path = string.format("%sClient/Cfg/?.lua;", luaSrcPath) .. oldPath
     require("ALLCFGS")
     package.path = oldPath
+end
+
+function LuaMgr:Shutdown()
 end
 
 return LuaMgr

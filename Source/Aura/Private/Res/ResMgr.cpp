@@ -5,7 +5,7 @@
 #include "LuaManger.h"
 #include "Aura/AuraLogChannels.h"
 
-UResMgr* UResMgr::m_handle = NULL;
+UResMgr* UResMgr::m_handle = nullptr;
 
 UResMgr* UResMgr::Get()
 {

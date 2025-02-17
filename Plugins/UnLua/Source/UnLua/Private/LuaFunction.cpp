@@ -127,67 +127,70 @@ bool ULuaFunction::Override(UFunction* Function, UClass* Outer, FName NewName)
 void ULuaFunction::RestoreOverrides(UClass* Class)
 {
     
-    // auto OrphanedClass = MakeOrphanedClass(Class);
-    // auto Current = &Class->Children;
-    // while (*Current)
-    // {
-    //     auto LuaFunction = Cast<ULuaFunction>(*Current);
-    //     if (!LuaFunction)
-    //     {
-    //         //wty
-    //         //Current = &(*Current)->Next;
-    //         //Current = &TObjectPtr<UField>((*Current)->Next);
-    //         continue;
-    //     }
-    //
-    //     *Current = LuaFunction->Next;
-    //     const auto Overridden = LuaFunction->GetOverridden();
-    //     if (Overridden && Overridden->GetOuter() == Class)
-    //     {
-    //         check(Overridden->GetName().EndsWith(OverriddenSuffix.Get()));
-    //         Class->RemoveFunctionFromFunctionMap(Overridden);
-    //         LuaFunction->Rename(nullptr, OrphanedClass, RenameFlags);
-    //         FLinkerLoad::InvalidateExport(LuaFunction);
-    //         Overridden->Rename(*Overridden->GetName().LeftChop(OverriddenSuffix.Length()), nullptr, RenameFlags);
-    //         Class->AddFunctionToFunctionMap(Overridden, Overridden->GetFName());
-    //     }
-    //     else
-    //     {
-    //         Class->RemoveFunctionFromFunctionMap(LuaFunction);
-    //     }
-    // }
-    // Class->ClearFunctionMapsCaches();
+    auto OrphanedClass = MakeOrphanedClass(Class);
+    auto Current = &Class->Children;
+    while (*Current)
+    {
+        auto LuaFunction = Cast<ULuaFunction>(*Current);
+        if (!LuaFunction)
+        {
+            //wty
+            //Current = &(*Current)->Next;
+            auto NextField = (*Current)->Next;
+            Current = new TObjectPtr<UField>(NextField);
+            continue;
+        }
+    
+        *Current = LuaFunction->Next;
+        const auto Overridden = LuaFunction->GetOverridden();
+        if (Overridden && Overridden->GetOuter() == Class)
+        {
+            check(Overridden->GetName().EndsWith(OverriddenSuffix.Get()));
+            Class->RemoveFunctionFromFunctionMap(Overridden);
+            LuaFunction->Rename(nullptr, OrphanedClass, RenameFlags);
+            FLinkerLoad::InvalidateExport(LuaFunction);
+            Overridden->Rename(*Overridden->GetName().LeftChop(OverriddenSuffix.Length()), nullptr, RenameFlags);
+            Class->AddFunctionToFunctionMap(Overridden, Overridden->GetFName());
+        }
+        else
+        {
+            Class->RemoveFunctionFromFunctionMap(LuaFunction);
+        }
+    }
+    Class->ClearFunctionMapsCaches();
 }
 
 void ULuaFunction::SuspendOverrides(UClass* Class)
 {
-    // check(!SuspendedOverrides.Contains(Class));
-    // auto OrphanedClass = MakeOrphanedClass(Class);
-    // SuspendedOverrides.Add(Class, OrphanedClass);
-    //
-    // auto Current = &Class->Children;
-    // while (*Current)
-    // {
-    //     auto LuaFunction = Cast<ULuaFunction>(*Current);
-    //     if (!LuaFunction)
-    //     {
-    //         //wty
-    //         //Current = &(*Current)->Next;
-    //         continue;
-    //     }
-    //
-    //     *Current = LuaFunction->Next;
-    //     const auto Overridden = LuaFunction->GetOverridden();
-    //     if (!Overridden || Overridden->GetOuter() != Class)
-    //         continue;
-    //
-    //     LuaFunction->Rename(nullptr, OrphanedClass, RenameFlags);
-    //     Overridden->Rename(*Overridden->GetName().LeftChop(OverriddenSuffix.Length()), nullptr, RenameFlags);
-    //
-    //     const auto OrphanedNext = OrphanedClass->Children;
-    //     OrphanedClass->Children = LuaFunction;
-    //     LuaFunction->Next = OrphanedNext;
-    // }
+    check(!SuspendedOverrides.Contains(Class));
+    auto OrphanedClass = MakeOrphanedClass(Class);
+    SuspendedOverrides.Add(Class, OrphanedClass);
+    
+    auto Current = &Class->Children;
+    while (*Current)
+    {
+        auto LuaFunction = Cast<ULuaFunction>(*Current);
+        if (!LuaFunction)
+        {
+            //wty
+            auto NextField = (*Current)->Next;
+            Current = new TObjectPtr<UField>(NextField);
+            //Current = &(*Current)->Next;
+            continue;
+        }
+    
+        *Current = LuaFunction->Next;
+        const auto Overridden = LuaFunction->GetOverridden();
+        if (!Overridden || Overridden->GetOuter() != Class)
+            continue;
+    
+        LuaFunction->Rename(nullptr, OrphanedClass, RenameFlags);
+        Overridden->Rename(*Overridden->GetName().LeftChop(OverriddenSuffix.Length()), nullptr, RenameFlags);
+    
+        const auto OrphanedNext = OrphanedClass->Children;
+        OrphanedClass->Children = LuaFunction;
+        LuaFunction->Next = OrphanedNext;
+    }
 }
 
 void ULuaFunction::ResumeOverrides(UClass* Class)

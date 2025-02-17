@@ -67,6 +67,9 @@ public:
 	UFUNCTION()
 	UObject* GetResMgr();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void LuaFree();
+
 public:
 	static UGameInstance* m_pGame;
 
