@@ -7,13 +7,11 @@ function BattleLoadingPanel:OnInit()
 end
 
 function BattleLoadingPanel:OnShow(fromPanel, param1)
-    
+
 end
 
 function BattleLoadingPanel:OnHide()
-
 end
-
 
 
 return BattleLoadingPanel

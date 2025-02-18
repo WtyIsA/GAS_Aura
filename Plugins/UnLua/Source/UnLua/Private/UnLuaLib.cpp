@@ -235,14 +235,14 @@ namespace UnLua
         {
             lua_newtable(L);
             luaL_setfuncs(L, UnLua_Functions, 0);
-            //lua_pushstring(L, "Content/Lua/?.lua;Plugins/UnLua/Content/Script/?.lua");
-            //lua_setfield(L, -2, PACKAGE_PATH_KEY);
+            lua_pushstring(L, "Content/Lua/?.lua;Plugins/UnLua/Content/Script/?.lua");
+            lua_setfield(L, -2, PACKAGE_PATH_KEY);
             return 1;
         }
 
         int Open(lua_State* L)
         {
-            //lua_register(L, "print", LogInfo);
+            lua_register(L, "print", LogInfo);
             luaL_requiref(L, "UnLua", LuaOpen, 1);
             luaL_dostring(L, R"(
                 setmetatable(UnLua, {

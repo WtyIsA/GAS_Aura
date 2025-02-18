@@ -34,15 +34,24 @@ function LuaMgr:Init()
     require("Event.EventUtils")
     self:RequireAllCfgs()
     self:LoadLuaFileOnInit()
+
+    Global.g_Ticker = Ticker:new();
+    TickList:push(Global.g_Ticker, Global.g_Ticker.OnTick)
+    Global.g_event = EventMgr:Instance();
     Global.g_resMgr:Init();
 end
 
 ---@private
 function LuaMgr:Start()
 
-    UIWidgetMgr.Init("/Game/UI/UI_PC/", "WBP_Rotating_loading_p")
+    UIWidgetMgr.Init("/Game/UI/UI_PC/", "WBP_Rotating_loading")
     --UIWidgetMgr.Prepare("WBP_BattleLoading", true)
-    --UIWidgetMgr.Show("WBP_BattleLoading")
+    UIWidgetMgr.Show("WBP_BattleLoading")
+
+
+    package.cpath = package.cpath .. ';C:/Users/wty/AppData/Roaming/JetBrains/Rider2023.3/plugins/EmmyLua/debugger/emmy/windows/x64/?.dll'
+    local dbg = require('emmy_core')
+    dbg.tcpListen('localhost', 9966)
 end
 
 function LuaMgr:InitRequirePath()
@@ -68,6 +77,13 @@ end
 function LuaMgr:LoadLuaFileOnInit()
     require("ResMgr.ClientResMgr")
     require("UI.UIWidgetMgr");
+    require("TickList");
+    require("Ticker")
+    require("Event.EventMgr")
+end
+
+function LuaMgr:TickInLua(DeltaSeconds)
+    TickList:Tick(DeltaSeconds)
 end
 
 return LuaMgr

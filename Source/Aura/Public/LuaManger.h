@@ -19,7 +19,7 @@ DECLARE_DYNAMIC_DELEGATE_FiveParams(FSdkBoolIntThreeStringsDelegate, bool, bSucc
 DECLARE_DYNAMIC_DELEGATE_FourParams(FSdkBoolTwoIntStringDelegate, bool, bSuccess, int, param1, int, param2, const FString&, strData);
 
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FSdkBoolLongDelegate, bool, bSuccess, uint64, userId);
-
+class FLuaGcTickable;
 /**
  * 
  */
@@ -45,9 +45,16 @@ public:
 		}
 	}
 
+	void Tick();
+	UFUNCTION()
+	void SetTimer(float DeltaTime);
+	
 	UFUNCTION()
 	void SetLuaSearchPathAndOcPath(const TArray<FString>& luaSearchPaths, const FString& ocPath);
 
+	UFUNCTION(BlueprintNativeEvent)
+	void TickInLua(float DeltaSeconds);
+	
 	UFUNCTION()
 	FString GetLuaSrcPath(FString& luaScriptName) const;
 
@@ -114,6 +121,23 @@ public:
 	UFUNCTION()
 	void Log(int nLevel, FString& strModuleName, FString& strLogContent)const;
 
+	UFUNCTION()
+	static double GetCppTime();
+#pragma region level
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnLoadStreamLevel(  const FString& worldName, UWorld* pWorld);
+	UFUNCTION(BlueprintNativeEvent)
+	void OnUnLoadStreamLevel(  const FString& worldName, UWorld* pWorld);
+	UFUNCTION(BlueprintNativeEvent)
+	void OnLevelLoaded(UWorld* pWorld,const FString& levelName);
+	UFUNCTION(BlueprintNativeEvent)
+	void OnDsNetWorkFailure(UWorld * World, const FString& worldName, UNetDriver *NetDriver, int32 nailureType, const FString& ErrorString);
+	UFUNCTION(BlueprintNativeEvent)
+	void OnLevelUnloadComplete(UWorld * World, const FString& worldName, bool bSessionEnded, bool bCleanupResources);
+
+#pragma endregion
+
 	
 #pragma region http
 	UFUNCTION(BlueprintNativeEvent)
@@ -127,4 +151,12 @@ public:
 	FSdkBoolTwoIntStringDelegate OnGetFriendChainInfo;
 	FSdkBoolLongDelegate OnGetFriendChainPermission;
 #pragma endregion
+
+private:
+	FString GetIniFilePath(FString& filePath);
+	int32   _nLatentUuid;
+	FTimerHandle _tHandle;
+	double          m_lastTickTime;
+	FLuaGcTickable* m_luaGcTick;
+
 };
