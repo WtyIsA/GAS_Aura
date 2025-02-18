@@ -7,6 +7,9 @@
 #include "UObject/NoExportTypes.h"
 #include "LuaManger.generated.h"
 
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FResLoadDelegate, const FString&, ResPath, UObject*, ResObject);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FMutliResLoadDelegate, TArray<FString>, ResPathList, TArray<UObject*>, ResList);
+
 DECLARE_DYNAMIC_DELEGATE_FiveParams(FOnHttpDownloadComplete, const FString&, strUrl, bool, bSuccess, const FString&, contentOrsavePath, bool, bSaveFile, int, errorCode);
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FSdkBoolDelegate, bool, bState);
@@ -70,12 +73,48 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void LuaFree();
 
+	UFUNCTION()
+	void AddUObjectToRoot(UObject* pObject);
+
+	UFUNCTION()
+	void RemoveUObjectFromRoot(UObject* pObject);
+
+#pragma region UUserWidget
+    
+    UFUNCTION()
+    void AddWidgetToGameViewPort(UUserWidget* widget, int nOrder);
+    UFUNCTION()
+    void RemoveWidgetFromGameViewPort(UUserWidget* widget);
+
+#pragma endregion
+	
 public:
 	static UGameInstance* m_pGame;
-
+	TArray<UObject*>   m_rootObjs;   
 	UFUNCTION()
 	UGameInstance* GetGameInstance();
 
+	UFUNCTION()
+	UObject* LoadRes(const FString& ResPath);
+
+	UFUNCTION()
+	void LoadResAsync(const FString& ResPath, const FResLoadDelegate& Callback = FResLoadDelegate(), int32 Priority = 0, bool bCallbackAutoRelease=false);
+        
+	UFUNCTION()
+	void LoadMultiResAsync(TArray<FString>& ResPathList, const FMutliResLoadDelegate& Callback = FMutliResLoadDelegate(), int32 Priority = 0, bool bCallbackAutoRelease=false);
+
+	UFUNCTION()
+	UObject* CreateObject(const UClass* Class);
+
+	UFUNCTION()
+	UUserWidget* CreateUserWidget(TSubclassOf<class UUserWidget> WidgetType);
+	UFUNCTION()
+	UUserWidget* CreateUserWidgetFromPath(const FString& ResPath, bool bAsync=true, const FResLoadDelegate& Callback = FResLoadDelegate(), int32 Priority = 0, bool bCallbackAutoRelease=false);
+	
+	UFUNCTION()
+	void Log(int nLevel, FString& strModuleName, FString& strLogContent)const;
+
+	
 #pragma region http
 	UFUNCTION(BlueprintNativeEvent)
 	void OnDownloadComplete(const FString& strUrl, bool bSuccess, const FString& contentOrsavePath, bool bSaveFile, int errorCode = 0);

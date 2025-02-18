@@ -39,10 +39,9 @@ private:
 
     static bool IsBlueprint(const FAssetData& AssetData);
 
-    static bool ShouldExport(const FAssetData& AssetData);
+    static bool ShouldExport(const FAssetData& AssetData, bool bLoad = false);
 
     void Export(const UBlueprint* Blueprint);
-    void Export2(const UBlueprint* Blueprint);
 
     void Export(const UField* Field);
 

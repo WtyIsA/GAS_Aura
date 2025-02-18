@@ -10,12 +10,6 @@ local LuaMgr = Class()
 
 ---@private
 function LuaMgr:Init()
-
-end
-
----@private
-function LuaMgr:Start()
-    print("!!!!!!!!!!!")
     local luaPath = UE4.TArray("");
     luaPath:Add("Client/")
     luaPath:Add("Client/Cfg/")
@@ -33,15 +27,22 @@ function LuaMgr:Start()
     Global.g_luaMgr = self;
     Global.g_gameInstance = self:GetGameInstance();
     Global.g_resMgr = self:GetResMgr();
-    print(Global.g_resMgr)
     Global._ProjectPersistentDownloadDir = self:GetPersistentDownloadDir();
     --Global.g_FPSMgr = Global.g_luaMgr:GetFPSManager();
 
     require("Utils")
-
-    --self:RequireAllCfgs()
+    require("Event.EventUtils")
+    self:RequireAllCfgs()
+    self:LoadLuaFileOnInit()
     Global.g_resMgr:Init();
-    
+end
+
+---@private
+function LuaMgr:Start()
+
+    UIWidgetMgr.Init("/Game/UI/UI_PC/", "WBP_Rotating_loading_p")
+    --UIWidgetMgr.Prepare("WBP_BattleLoading", true)
+    --UIWidgetMgr.Show("WBP_BattleLoading")
 end
 
 function LuaMgr:InitRequirePath()
@@ -62,6 +63,11 @@ function LuaMgr:RequireAllCfgs()
 end
 
 function LuaMgr:Shutdown()
+end
+
+function LuaMgr:LoadLuaFileOnInit()
+    require("ResMgr.ClientResMgr")
+    require("UI.UIWidgetMgr");
 end
 
 return LuaMgr
