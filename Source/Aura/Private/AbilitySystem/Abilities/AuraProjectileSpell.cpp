@@ -50,32 +50,34 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 
-	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(
-		GetAvatarActorFromActorInfo());
+	// const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(
+	// 	GetAvatarActorFromActorInfo());
+	//
+	// FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
+	// EffectContextHandle.SetAbility(this);
+	// EffectContextHandle.AddSourceObject(Projectile);
+	// TArray<TWeakObjectPtr<AActor>> Actors;
+	// Actors.Add(Projectile);
+	// EffectContextHandle.AddActors(Actors);
+	// FHitResult HitResult;
+	// HitResult.Location = ProjectileTargetLocation;
+	// EffectContextHandle.AddHitResult(HitResult);
+	//
+	// int32 Level = GetAbilityLevel();
+	// //Level = 20;
+	// const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(
+	// 	DamageEffectClass, Level, EffectContextHandle);
+	//
+	// // set by caller 伤害值
+	// // const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	// // const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+	// // UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTags.Damage, ScaledDamage);
+	//
+	// const float ScaledDamage = Damage.GetValueAtLevel(Level);
+	// UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageType, ScaledDamage);
+	//
+	// Projectile->DamageEffectSpecHandle = SpecHandle;
+	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 
-	FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
-	EffectContextHandle.SetAbility(this);
-	EffectContextHandle.AddSourceObject(Projectile);
-	TArray<TWeakObjectPtr<AActor>> Actors;
-	Actors.Add(Projectile);
-	EffectContextHandle.AddActors(Actors);
-	FHitResult HitResult;
-	HitResult.Location = ProjectileTargetLocation;
-	EffectContextHandle.AddHitResult(HitResult);
-
-	int32 Level = GetAbilityLevel();
-	//Level = 20;
-	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(
-		DamageEffectClass, Level, EffectContextHandle);
-
-	// set by caller 伤害值
-	// const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
-	// const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
-	// UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTags.Damage, ScaledDamage);
-
-	const float ScaledDamage = Damage.GetValueAtLevel(Level);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageType, ScaledDamage);
-
-	Projectile->DamageEffectSpecHandle = SpecHandle;
 	Projectile->FinishSpawning(SpawnTransform);
 }

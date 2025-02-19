@@ -46,12 +46,8 @@ function LuaMgr:Start()
 
     UIWidgetMgr.Init("/Game/UI/UI_PC/", "WBP_Rotating_loading")
     --UIWidgetMgr.Prepare("WBP_BattleLoading", true)
-    UIWidgetMgr.Show("WBP_BattleLoading")
+    --UIWidgetMgr.Show("WBP_BattleLoading")
 
-
-    package.cpath = package.cpath .. ';C:/Users/wty/AppData/Roaming/JetBrains/Rider2023.3/plugins/EmmyLua/debugger/emmy/windows/x64/?.dll'
-    local dbg = require('emmy_core')
-    dbg.tcpListen('localhost', 9966)
 end
 
 function LuaMgr:InitRequirePath()

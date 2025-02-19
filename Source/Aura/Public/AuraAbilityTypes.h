@@ -5,10 +5,14 @@
 
 class UGameplayEffect;
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FDamageEffectParams
 {
 	GENERATED_BODY()
+
+	FDamageEffectParams()
+	{
+	}
 
 	UPROPERTY()
 	TObjectPtr<UObject> WorldContextObject = nullptr;
