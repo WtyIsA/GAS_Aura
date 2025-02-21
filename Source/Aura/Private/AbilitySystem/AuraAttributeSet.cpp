@@ -9,12 +9,11 @@
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
-#include "Aura/AuraLogChannels.h"
 #include "Character/AuraCharacter.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
-#include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerController.h"
+#include "GameplayEffectComponents/TargetTagsGameplayEffectComponent.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -144,7 +143,7 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 			ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
 			if (CombatInterface)
 			{
-				CombatInterface->Die();
+				CombatInterface->Die(UAuraAbilitySystemLibrary::GetDeathImpulse(Props.EffectContextHandle));
 				SendXPEvent(Props);
 			}
 		}
@@ -159,7 +158,7 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 		const bool bCritical = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 
 		ShowFloatingText(Props, LocalIncomingDamage, bBlock, bCritical);
-		if (UAuraAbilitySystemLibrary::IsSuccessfulDeBuff(Props.EffectContextHandle))
+		if (UAuraAbilitySystemLibrary::IsSuccessfulDeBuff(Props.EffectContextHandle) && !bFatal)
 		{
 			DeBuff(Props);
 		}
@@ -218,10 +217,17 @@ void UAuraAttributeSet::DeBuff(const FEffectProperties& Props)
 	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DeBuffName));
 
 	Effect->DurationPolicy = EGameplayEffectDurationType::HasDuration;
-	Effect->Period = DeBuffFrequency;
+	Effect->Period = FScalableFloat(DeBuffFrequency);
 	Effect->DurationMagnitude = FScalableFloat(DeBuffDuration);
 
-	Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.DamageTypesToDeBuffs[DamageType]);
+	UTargetTagsGameplayEffectComponent& TargetTagsComponent = Effect->AddComponent<UTargetTagsGameplayEffectComponent>();
+
+	FInheritedTagContainer InheritedTagContainer;
+	const FGameplayTag DeBuffTag = GameplayTags.DamageTypesToDeBuffs[DamageType];
+	InheritedTagContainer.Added.AddTag(DeBuffTag);
+	TargetTagsComponent.SetAndApplyTargetTagChanges(InheritedTagContainer);
+
+	//Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.DamageTypesToDeBuffs[DamageType]);
 	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
 	Effect->StackLimitCount = 1;
 

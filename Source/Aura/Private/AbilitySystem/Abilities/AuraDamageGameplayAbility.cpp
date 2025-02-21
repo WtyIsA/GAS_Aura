@@ -22,15 +22,16 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	FDamageEffectParams Params;
 	Params.WorldContextObject = GetAvatarActorFromActorInfo();
 	Params.DamageGameplayEffectClass = DamageEffectClass;
-	Params.SourceAbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
+	Params.SourceAbilitySystemComponent = GetAbilitySystemComponentFromActorInfo_Checked();
 	Params.TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	Params.BaseDamage = Damage.GetValueAtLevel(GetAbilityLevel());
 	Params.AbilityLevel = GetAbilityLevel();
 	Params.DamageType = DamageType;
 	Params.DeBuffChance = DeBuffChance;
 	Params.DeBuffDamage = DeBuffDamage;
-	Params.DeBuffDamage = DeBuffDuration;
+	Params.DeBuffDuration = DeBuffDuration;
 	Params.DeBuffFrequency = DeBuffFrequency;
+	Params.DeathImpulseMagnitude = DeathImpulseMagnitude;
 	return Params;
 }
 

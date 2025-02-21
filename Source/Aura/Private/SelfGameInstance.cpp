@@ -47,11 +47,11 @@ void USelfGameInstance::Shutdown()
 	// UShortcutkeyMgr::Free();
 	// CHttpDownloadMgr::Free();
 	//  
-	ULuaManger::Get()->Shutdown();
+	ULuaManger::Get(this)->Shutdown();
 	ULuaManger::Free();
 	// UFPSManager::Free();
 	UnLua::Shutdown();
-	GConfig->Flush(true,FUtilsProject::GetUserConfigPath());
+	GConfig->Flush(true, FUtilsProject::GetUserConfigPath());
 	Super::Shutdown();
 }
 
